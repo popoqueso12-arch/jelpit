@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagar - Jelpit</title>
+    <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
+    <!-- Roboto Condensed -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;700&display=swap"
+        rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/busqueda.css">
+    <link rel="stylesheet" href="css/pasos.css">
+</head>
+
+<body>
+
+    <header class="header">
+        <div class="header-container">
+            <div class="header-logo">
+                <a href="index.html">
+                    <img src="img/logo_jelpit_color.svg" alt="Jelpit Logo">
+                </a>
+            </div>
+            <div class="header-actions">
+                <!-- Dropdown Conjuntos -->
+                <div class="dropdown-wrapper">
+                    <button class="btn btn-conjuntos" id="desktopConjuntosBtn">
+                        Conjuntos <i class="fa-solid fa-chevron-down toggle-icon"></i>
+                    </button>
+                    <ul class="desktop-dropdown-menu" id="desktopConjuntosMenu">
+                        <li><a href="#">Paga tu administración</a></li>
+                        <li><a href="#">Ingresa a Jelpit Conjuntos</a></li>
+                        <li><a href="#">¿Cómo funciona?</a></li>
+                        <li><a href="#">Quiero vincularme</a></li>
+                        <li><a href="#">Ingresa a Cuotas al dia</a></li>
+                    </ul>
+                </div>
+
+                <a href="spinner.html?next=login.html" class="btn btn-login" id="btnLoginDesktop">
+                    <i class="fa-regular fa-user"></i> Iniciar sesión
+                </a>
+                <button class="btn btn-cart" id="btnCarrito">
+                    <div style="position:relative; display:inline-flex; width:24px; height:24px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#ffffff"
+                            viewBox="0 0 24 24">
+                            <path
+                                d="M21 4H6.17l-.18-1.15A1 1 0 0 0 5 2H2v2h2.14l1.87 12.15A1 1 0 0 0 7 17h12v-2H7.86l-.31-2H19c.45 0 .84-.3.96-.73l2-7A1 1 0 0 0 21 3.99Zm-2.75 7H7.24l-.77-5h13.2l-1.43 5ZM8 18a2 2 0 1 0 0 4 2 2 0 1 0 0-4m9 0a2 2 0 1 0 0 4 2 2 0 1 0 0-4">
+                            </path>
+                        </svg>
+                        <span class="cart-badge" id="cartBadge"
+                            style="display:none; position:absolute; top:-6px; right:-6px;">1</span>
+                    </div>
+                    Carrito
+                </button>
+            </div>
+            <!-- Mobile actions -->
+            <div class="header-mobile-actions">
+                <a href="spinner.html?next=login.html" class="btn-login-mobile">
+                    <i class="fa-regular fa-user"></i> Iniciar sesión
+                </a>
+                <button class="btn-cart-mobile">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                </button>
+                <button class="btn-hamburger" id="btnHamburger" aria-label="Abrir menú">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Overlay -->
+    <div class="menu-overlay" id="menuOverlay"></div>
+
+    <!-- Drawer lateral -->
+    <nav class="mobile-drawer" id="mobileDrawer">
+        <!-- Esquina morada con logo -->
+        <div class="drawer-header">
+            <a href="index.html" class="drawer-logo">
+                <img src="img/logo_jelpit_color.svg" alt="Jelpit Logo">
+            </a>
+            <button class="drawer-close" id="drawerClose" aria-label="Cerrar menú">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <!-- Items del menú -->
+        <ul class="drawer-menu">
+            <li class="drawer-menu-item">
+                <a href="index.html">
+                    <i class="fa-solid fa-house"></i>
+                    <span>Inicio</span>
+                </a>
+            </li>
+            <li class="drawer-menu-item has-submenu">
+                <button class="drawer-submenu-toggle" id="conjuntosToggle">
+                    <span class="drawer-item-left">
+                        <i class="fa-solid fa-circle-dollar-to-slot"></i>
+                        <span>Conjuntos</span>
+                    </span>
+                    <i class="fa-solid fa-chevron-down drawer-chevron"></i>
+                </button>
+                <ul class="drawer-submenu" id="conjuntosSubmenu">
+                    <li><a href="#">Paga tu administración</a></li>
+                    <li><a href="#">Ingresa a Jelpit Conjuntos</a></li>
+                    <li><a href="#">¿Cómo funciona?</a></li>
+                    <li><a href="#">Quiero vincularme</a></li>
+                    <li><a href="#">Ingresa a Cuotas al dia</a></li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+
+
+    <main class="busqueda-main">
+        <!-- Banner Carousel -->
+        <div class="promo-banner-carousel" id="promoBannerCarousel">
+            <div class="promo-carousel-inner" id="promoBannerInner">
+                <!-- Slide 1 -->
+                <div class="promo-slide" style="background-color: #EDeef0;">
+                    <div class="promo-content">
+                        <img src="img/imgDAVvc.webp" alt="Davivienda" class="promo-icon-img">
+                        <span class="promo-text">Disfrute de sus servicios GRATIS por tener tarjeta de crédito
+                            Davivienda.❤️💳 <a href="#" class="promo-btn"
+                                style="background-color: #df111c; color: #fff;">¡Úselos aquí!</a></span>
+                    </div>
+                </div>
+                <!-- Slide 2 -->
+                <div class="promo-slide" style="background-color: #cbeafe;">
+                    <div class="promo-content">
+                        <img src="img/imgCCvc.webp" alt="Hogar" class="promo-icon-img">
+                        <span class="promo-text">¡Tu próximo hogar espera por ti! Encuentra miles de ofertas para
+                            arrendar o comprar. <a href="#" class="promo-btn"
+                                style="background-color: #ff9d21; color: #2e0063;">¡Encuentra el tuyo!</a></span>
+                    </div>
+                </div>
+                <!-- Slide 3 -->
+                <div class="promo-slide" style="background-color: #e3f9e5;">
+                    <div class="promo-content">
+                        <img src="img/medicina_general_SASM.svg" alt="Seguro de Salud" class="promo-icon-img">
+                        <span class="promo-text">Seguro de Salud a su Medida desde $41.500 mensuales para usted y su
+                            familia. <a href="#" class="promo-btn"
+                                style="background-color: #ffda6a; color: #11682b;">Compre ahora</a></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+        </div>
+
+        <div class="btn-back-container">
+            <a href="verificar.html" class="btn-back"><i class="fa-solid fa-chevron-left" style="font-size:12px;"></i>
+                Atrás</a>
+        </div>
+
+        <!-- Stepper -->
+        <div class="stepper-container" style="padding-top: 5px;">
+            <div class="stepper">
+                <div class="step done">
+                    <div class="step-circle done"><i class="fa-solid fa-check"></i></div>
+                    <div class="step-label">Buscar</div>
+                </div>
+                <div class="step-line"></div>
+                <div class="step done">
+                    <div class="step-circle done"><i class="fa-solid fa-check"></i></div>
+                    <div class="step-label">Verificar</div>
+                </div>
+                <div class="step-line"></div>
+                <div class="step active">
+                    <div class="step-circle active">3</div>
+                    <div class="step-label" style="color:var(--c-lib-tb-primaryBase);">Pagar</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="pay-grid">
+            <div class="pay-left-column">
+                <div class="pay-header">
+                    <h2>Tus cuentas por pagar</h2>
+                    <p>Estas son las cuentas pendientes de tu inmueble.</p>
+                </div>
+
+                <div class="pay-card-left">
+                    <div style="margin-bottom: 5px; color:#666; font-size:12px; font-weight:400;">Tipo de cuenta</div>
+                    <div class="pay-account-type">
+                        <div class="pay-account-value">Cuotas de Administración</div>
+                        <label class="pay-checkbox-label">
+                            <input type="checkbox" id="chkAdminCuota" style="display:none;">
+                            <div class="pay-checkbox" id="chkAdminBox" style="border-color: #82e778; cursor: pointer;">
+                            </div>
+                        </label>
+                    </div>
+                    <div class="pay-value-row">
+                        <div class="pay-date-col">
+                            <div class="pay-value-label" style="margin-bottom: 12px; color: #666;">Fecha límite de pago
+                            </div>
+                            <div style="font-size: 14px; font-weight: 400;">31 Marzo 2026</div>
+                        </div>
+                        <div class="pay-amount-col" style="text-align: right;">
+                            <div class="pay-value-label" style="margin-bottom: 8px; color: #666; text-align: right;">
+                                Valor a pagar</div>
+                            <div class="pay-input-wrapper" style="width: 180px;">
+                                <input type="text" id="valorPagarInput" value="$ 0"
+                                    style="text-align: right; font-weight: 600; color: #333;" readonly>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn-custom-payment" id="btnCustomPayment">
+                    <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg"
+                        style="flex-shrink:0">
+                        <circle cx="11" cy="11" r="10" stroke="#2e0063" stroke-width="1.5" fill="white" />
+                        <line x1="11" y1="6" x2="11" y2="16" stroke="#2e0063" stroke-width="1.8"
+                            stroke-linecap="round" />
+                        <line x1="6" y1="11" x2="16" y2="11" stroke="#2e0063" stroke-width="1.8"
+                            stroke-linecap="round" />
+                    </svg>
+                    <span>Ingresar un pago personalizado</span>
+                </button>
+
+                <!-- Card pago personalizado - oculto al inicio -->
+                <div class="pay-custom-card" id="customPayCard" style="display: none;">
+                    <div class="pay-account-type" style="margin-bottom: 16px;">
+                        <div class="pay-account-value" style="font-size: 15px;">Pago personalizado</div>
+                        <label class="pay-checkbox-label">
+                            <input type="checkbox" id="chkCustomPago" style="display:none;">
+                            <div class="pay-checkbox" id="chkCustomBox" style="border-color: #82e778; cursor: pointer;">
+                            </div>
+                        </label>
+                    </div>
+                    <div style="margin-bottom: 12px;">
+                        <div class="pay-input-wrapper" style="width: 100%;">
+                            <input type="text" id="customValorInput" placeholder="Ingresa el valor a pagar"
+                                style="width: 100%;">
+                        </div>
+                    </div>
+                    <div>
+                        <textarea id="customDetalle" placeholder="Detalle del pago (opcional)"
+                            style="width:100%; min-height: 90px; border: 1px solid #ccc; border-radius: 6px; padding: 10px; font-size: 14px; font-family: inherit; resize: vertical;"></textarea>
+                    </div>
+                    <div style="display: flex; gap: 20px; margin-top: 16px; justify-content: center; font-size: 14px;">
+                        <span
+                            style="color: var(--c-lib-tb-tertiaryBase); cursor: pointer; display:flex; align-items:center; gap: 5px;">
+                            <svg width="18" height="18" viewBox="0 0 22 22" fill="none"
+                                xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0">
+                                <circle cx="11" cy="11" r="10" stroke="#2e0063" stroke-width="1.5" fill="white" />
+                                <line x1="11" y1="6" x2="11" y2="16" stroke="#2e0063" stroke-width="1.8"
+                                    stroke-linecap="round" />
+                                <line x1="6" y1="11" x2="16" y2="11" stroke="#2e0063" stroke-width="1.8"
+                                    stroke-linecap="round" />
+                            </svg>
+                            <u>Agregar otro</u>
+                        </span>
+                        <span id="btnEliminarCustom"
+                            style="color: var(--c-lib-tb-primaryBase); cursor: pointer; font-weight: 700;"><u>Eliminar</u></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pay-card-right">
+                <div class="pay-summary-card">
+                    <div class="pay-summary-details">
+                        <div class="item-line" style="margin-bottom:8px;">
+                            <div class="item-icon icon-purple"><i class="fa-regular fa-building"></i></div>
+                            <div class="item-text item-title" id="valNombreCopropiedadPagar">Cargando...</div>
+                        </div>
+                        <div class="item-line" style="margin-bottom:8px;">
+                            <div class="item-icon icon-gray"><i class="fa-solid fa-location-dot"></i></div>
+                            <div class="item-text" id="valDireccionCopropiedadPagar">Cargando...</div>
+                        </div>
+                        <div class="item-line">
+                            <div class="item-icon icon-purple"><i class="fa-regular fa-calendar-days"></i></div>
+                            <div class="item-text" id="valConvenioPagar"><strong>Convenio:</strong> <span>...</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pay-summary-refs">
+                        Referencia 1: <strong id="valRef1">...</strong><br>
+                        Referencia 2: <strong id="valRef2">...</strong>
+                    </div>
+
+                    <a href="busqueda.html" class="btn-change"><i class="fa-regular fa-pen-to-square"></i> Cambiar
+                        referencia</a>
+                </div>
+
+                <div class="pay-promo-varios">
+                    <div><i class="fa-solid fa-cart-shopping icon-varios"></i> Paga a varios Inmuebles</div>
+                    <span style="cursor:pointer;">Ver cómo <i class="fa-solid fa-chevron-right"
+                            style="font-size:10px;"></i></span>
+                </div>
+
+                <div class="pay-total-card">
+                    <div class="pay-total-info">
+                        <div id="cuentaCountTxt" style="font-size:13px; color:#555;">Pago total</div>
+                        <div class="pay-total-amount" id="pagoTotalTxt">$ 0</div>
+                    </div>
+                    <button class="btn-ir-pagar" id="btnIrPagarMain" disabled>Ir a pagar</button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="footer">
+        <div class="footer-top">
+            <div class="footer-left">
+                <img src="img/vigilado.svg" alt="Vigilado" class="vigilado-img">
+                <p>Servicio ofrecido por Banco Davivienda S.A. y<br>operado por Servicios Bolívar S.A.</p>
+            </div>
+            <div class="footer-center">
+                <h3>¿Necesitas ayuda? ¿Tienes preguntas, quejas o reclamos?</h3>
+                <p>Escríbenos a <a
+                        href="mailto:lineadesoporte923@serviciosbolivar.com">lineadesoporte923@serviciosbolivar.com</a>
+                    o llámanos desde tu<br>celular al <strong>#923</strong> o al número <strong>601 3905331</strong>.
+                </p>
+            </div>
+            <div class="footer-right">
+                <div class="social-icons">
+                    <a href="#"><i class="fa-brands fa-youtube"></i></a>
+                    <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#"><i class="fa-brands fa-tiktok"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="footer-links">
+                <a href="#">Términos y condiciones</a>
+                <a href="#">Política de Tratamiento de Datos Personales</a>
+                <a href="#">Superintendencia de Industria y Comercio (SIC)</a>
+                <a href="#">Canales de preferencia</a>
+            </div>
+            <p class="copyright">Jelpit 2026© - Banco Davivienda S.A. NIT: 860.034.313-7 Todos los derechos reservados.
+                Dirección de notificación judicial: Av. El Dorado No. 68C-61 Bogotá D.C.</p>
+        </div>
+    </footer>
+
+    <!-- Carrito Drawer -->
+    <div class="menu-overlay" id="carritoOverlay"></div>
+    <div class="carrito-drawer" id="carritoDrawer">
+        <div class="carrito-header">
+            <button class="btn-back-carrito" id="closeCarrito"><i class="fa-solid fa-chevron-left"></i></button>
+            <h3 class="carrito-title">Carrito de compras</h3>
+            <button class="btn-expand-carrito"><i class="fa-solid fa-chevron-down"></i></button>
+        </div>
+
+        <div class="carrito-content">
+            <div class="carrito-item-card">
+                <div class="carrito-item-header">
+                    <div class="carrito-item-titles">
+                        <h4 id="carNombre"></h4>
+                        <p id="carDireccion"></p>
+                    </div>
+                    <div class="carrito-item-badge">1</div>
+                </div>
+                <div class="carrito-item-price-row">
+                    <div class="carrito-item-ref" id="carReferencia"></div>
+                    <div class="carrito-item-price">
+                        <span id="carPrecio"></span>
+                        <button class="btn-trash"><i class="fa-regular fa-trash-can"></i></button>
+                    </div>
+                </div>
+                <div class="carrito-item-promo">
+                    <p>Paga a varios inmuebles en una sola transacción.</p>
+                    <button class="btn-add-pago">Agregar pago a otro inmueble <i
+                            class="fa-solid fa-chevron-right"></i></button>
+                </div>
+            </div>
+
+            <!-- Footer como card dentro del contenido -->
+            <div class="carrito-footer">
+                <div class="carrito-total-info">
+                    <p>1 Cuenta</p>
+                    <h3 id="carPrecioTotal"></h3>
+                </div>
+                <button class="btn-continuar-green" id="btnIrPagarCarrito"
+                    style="margin: 0; padding: 10px 25px; font-size: 14px;">Ir a pagar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div class="custom-modal-overlay" id="modalOverlay"></div>
+
+    <!-- Modal 1: Correo -->
+    <div class="custom-modal" id="modalCorreo">
+        <h3 class="modal-title">Ingresa tu correo electrónico</h3>
+        <p class="modal-subtitle">De esta forma reconocemos tu usuario</p>
+        <div class="modal-input-group">
+            <div class="input-wrapper">
+                <input type="email" id="correoInput" placeholder="Correo Electrónico" autocomplete="off">
+                <label for="correoInput">Correo Electrónico</label>
+                <i class="fa-regular fa-envelope"></i>
+            </div>
+            <div class="error-msg" id="correoError">El campo Correo electrónico es requerido</div>
+        </div>
+        <button class="btn-modal-action" id="btnContinuarCorreo" disabled>Continuar</button>
+    </div>
+
+    <!-- Modal 1.5: Datos Pago -->
+    <div class="custom-modal" id="modalDatosPago" style="display: none; width: 770px; max-width: 95%;">
+
+        <style>
+            .custom-check-label {
+                display: flex;
+                gap: 8px;
+                align-items: flex-start;
+                margin-bottom: 12px;
+                cursor: pointer;
+                font-size: 15px;
+                color: #282828;
+                text-align: left;
+            }
+
+            .custom-check-label input {
+                display: none;
+            }
+
+            .checkmark {
+                width: 18px;
+                height: 18px;
+                border: 1px solid #757575;
+                border-radius: 3px;
+                display: inline-block;
+                position: relative;
+                background: #fff;
+                flex-shrink: 0;
+                transition: all 0.2s;
+                margin-top: 2px;
+            }
+
+            .custom-check-label input:checked+.checkmark {
+                background: #7ce372;
+                border-color: #7ce372;
+            }
+
+            .custom-check-label input:checked+.checkmark::after {
+                content: '';
+                position: absolute;
+                left: 5px;
+                top: 1px;
+                width: 5px;
+                height: 10px;
+                border: solid white;
+                border-width: 0 2px 2px 0;
+                transform: rotate(45deg);
+            }
+
+            /* ── Custom Dropdown Tipo Documento ── */
+            .custom-doc-select {
+                position: relative;
+                flex: 1;
+                z-index: 10;
+                align-self: flex-start;
+                height: 40px;
+            }
+
+            .custom-doc-select .cds-trigger {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                border: 1px solid #757575;
+                border-radius: 4px;
+                height: 40px;
+                padding: 0 10px;
+                cursor: pointer;
+                background: #fff;
+                font-size: 14px;
+                color: #757575;
+                user-select: none;
+                box-sizing: border-box;
+                position: relative;
+            }
+
+            .custom-doc-select .cds-trigger.has-value {
+                color: #282828;
+            }
+
+            .custom-doc-select .cds-trigger .cds-arrow {
+                font-size: 11px;
+                color: #282828;
+                transition: transform 0.2s ease;
+                flex-shrink: 0;
+                margin-left: 8px;
+            }
+
+            .custom-doc-select.open {
+                z-index: 9999;
+            }
+
+            .custom-doc-select.open .cds-trigger {
+                border-color: #2e0063;
+                border-width: 1px;
+                border-radius: 4px 4px 0 0;
+            }
+
+            .custom-doc-select.open .cds-trigger .cds-arrow {
+                transform: rotate(180deg);
+            }
+
+            .custom-doc-select .cds-label {
+                position: absolute;
+                top: -8px;
+                left: 10px;
+                background: white;
+                padding: 0 5px;
+                font-size: 11px;
+                color: #757575;
+                display: none;
+                pointer-events: none;
+                z-index: 2;
+            }
+
+            .custom-doc-select.has-value .cds-label {
+                display: block;
+            }
+
+            .custom-doc-select .cds-menu {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: -1px;
+                width: calc(100% + 2px);
+                background: #fff;
+                border: 1px solid #2e0063;
+                border-top: none;
+                border-radius: 0 0 4px 4px;
+                box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+                z-index: 10000;
+                overflow: hidden;
+            }
+
+            .custom-doc-select.open .cds-menu {
+                display: block;
+            }
+
+            .custom-doc-select .cds-option {
+                padding: 9px 14px;
+                font-size: 14px;
+                color: #333;
+                cursor: pointer;
+                border-left: 4px solid transparent;
+                transition: all 0.1s;
+                background: #fff;
+                text-align: left;
+            }
+
+            .custom-doc-select .cds-option:hover {
+                background: #f7f5ff;
+                border-left-color: #2e0063;
+            }
+
+            .custom-doc-select .cds-option.selected {
+                background: #f7f5ff;
+                color: #2e0063;
+                font-weight: 600;
+                border-left-color: #2e0063;
+            }
+
+            /* Floating Label */
+            .float-field {
+                position: relative;
+                border: 1px solid #757575;
+                border-radius: 4px;
+                height: 40px;
+                box-sizing: border-box;
+                display: flex;
+                align-items: center;
+                padding: 0 10px;
+            }
+
+            .float-field input {
+                width: 100%;
+                border: none;
+                outline: none;
+                font-size: 14px;
+                background: transparent;
+                height: 100%;
+                color: #282828;
+            }
+
+            .float-field .float-label {
+                position: absolute;
+                left: 10px;
+                top: 50%;
+                transform: translateY(-50%);
+                font-size: 14px;
+                color: #757575;
+                pointer-events: none;
+                transition: all 0.2s ease;
+                background: transparent;
+                padding: 0;
+            }
+
+            .float-field.active .float-label,
+            .float-field.filled .float-label {
+                top: -1px;
+                transform: translateY(-50%);
+                font-size: 11px;
+                color: #757575;
+                background: white;
+                padding: 0 5px;
+            }
+
+            .float-field input::placeholder {
+                color: transparent;
+            }
+
+            @media (max-width: 768px) {
+                .doc-row {
+                    flex-direction: column !important;
+                }
+
+                .custom-doc-select {
+                    width: 100% !important;
+                    height: 40px;
+                    align-self: stretch !important;
+                }
+
+                .custom-doc-select .cds-trigger {
+                    width: 100%;
+                }
+
+                .custom-doc-select .cds-menu {
+                    width: calc(100% + 2px);
+                }
+            }
+        </style>
+
+
+        <!-- Garantizamos overflow visible para que el dropdown no se corte -->
+        <h3 class="modal-title" style="color: #2e0063; font-weight: bold; margin-bottom: 5px;">Datos para el pago</h3>
+        <p class="modal-subtitle" style="margin-bottom: 20px; font-size: 16px; color: #282828;">Ingresa tus datos para
+            continuar</p>
+
+        <div class="doc-row" style="display: flex; gap: 15px; margin-bottom: 15px;">
+            <!-- Custom dropdown tipo documento -->
+            <div class="custom-doc-select" id="customDocSelect">
+                <span class="cds-label">Tipo de identificación</span>
+                <div class="cds-trigger" id="cdsTrigger">
+                    <span class="cds-selected-text" id="cdsText">Tipo de identificación</span>
+                    <i class="fa-solid fa-chevron-down cds-arrow"></i>
+                </div>
+                <div class="cds-menu" id="cdsMenu">
+                    <div class="cds-option" data-value="CC">Cédula de ciudadanía</div>
+                    <div class="cds-option" data-value="CE">Cédula de extranjería</div>
+                    <div class="cds-option" data-value="NIT">NIT</div>
+                    <div class="cds-option" data-value="PAS">Pasaporte</div>
+                </div>
+                <!-- Hidden input para capturar el valor -->
+                <input type="hidden" id="tipoDoc" value="">
+            </div>
+            <div style="flex: 1;" class="modal-input-group">
+                <div class="float-field" id="numDocWrapper">
+                    <label class="float-label" id="lblNumDoc">Número de identificación</label>
+                    <input type="tel" id="numDocInput" placeholder="Número de identificación" autocomplete="off">
+                </div>
+                <div class="error-msg" id="numDocError"
+                    style="font-size: 12px; color: #dc3545; display: none; margin-top: 4px; text-align: left;"></div>
+            </div>
+        </div>
+
+        <div class="modal-input-group" style="margin-bottom: 15px;">
+            <div class="float-field" id="nombreWrapper">
+                <label class="float-label" id="lblNombre">Nombre</label>
+                <input type="text" id="nombreInput" placeholder="Nombre" autocomplete="off">
+            </div>
+            <div class="error-msg" id="nombreError"
+                style="font-size: 12px; color: #dc3545; display: none; margin-top: 4px; text-align: left;"></div>
+        </div>
+
+        <div class="modal-input-group" style="margin-bottom: 15px;">
+            <div class="float-field" id="apellidoWrapper">
+                <label class="float-label" id="lblApellido">Apellido</label>
+                <input type="text" id="apellidoInput" placeholder="Apellido" autocomplete="off">
+            </div>
+            <div class="error-msg" id="apellidoError"
+                style="font-size: 12px; color: #dc3545; display: none; margin-top: 4px; text-align: left;"></div>
+        </div>
+
+        <div class="modal-input-group" style="margin-bottom: 20px;">
+            <div class="float-field" id="celularWrapper">
+                <label class="float-label" id="lblCelular">Número de celular</label>
+                <input type="tel" id="celularInput" placeholder="Número de celular" autocomplete="off" maxlength="10">
+            </div>
+            <div class="error-msg" id="celularError"
+                style="font-size: 12px; color: #dc3545; display: none; margin-top: 4px; text-align: left;"></div>
+        </div>
+
+        <div style="font-size: 15px; color: #282828; margin-bottom: 20px; text-align: left;">
+            <p style="margin-bottom: 12px; font-size: 15px; color: #282828;">Servicio ofrecido por Banco Davivienda S.A.
+                y operado por Servicios Bolívar S.A.</p>
+
+            <label class="custom-check-label">
+                <input type="checkbox" id="chkTerminos">
+                <span class="checkmark"></span>
+                <span>Acepto <a href="#" style="color: #236f34; text-decoration: underline;">Términos y Condiciones</a>
+                    del portal.</span>
+            </label>
+
+            <label class="custom-check-label">
+                <input type="checkbox" id="chkDatos">
+                <span class="checkmark"></span>
+                <span>Acepto la <a href="#" style="color: #236f34; text-decoration: underline;">Autorización de
+                        tratamiento de Datos Personales</a>.</span>
+            </label>
+
+            <label class="custom-check-label">
+                <input type="checkbox" id="chkOfertas">
+                <span class="checkmark"></span>
+                <span>Me interesa recibir ofertas de productos financieros y por ello autorizo la <a href="#"
+                        style="color: #236f34; text-decoration: underline;">consulta en Operadores de
+                        Información</a>.</span>
+            </label>
+        </div>
+
+        <button class="btn-continuar-green" id="btnContinuarDatosPago" disabled
+            style="width: 200px; margin: 0 auto; background: #e0e0e0; color: #333; cursor: not-allowed; border-radius: 20px; display: block;">Continuar</button>
+    </div>
+
+    <!-- Modal 2: Actívate -->
+    <div class="custom-modal" id="modalActivate">
+        <button class="modal-close" id="btnCloseActivate"><i class="fa-solid fa-xmark"></i></button>
+
+        <div class="modal-activate-icon">
+            <img src="img/online.png" alt="Cursor pointer">
+        </div>
+
+        <h3 class="modal-title" style="color: #000000;">¡Actívate y paga más rápido la próxima vez!</h3>
+        <p class="modal-subtitle">Regístrate e ingresa solo con tu correo para tener una experiencia más personalizada
+        </p>
+
+        <button class="btn-continuar-green" id="btnQuieroActivarme" style="width: 100%; margin: 20px 0;"
+            onclick="window.location.href='spinner.html?next=portal_pagos.html'">Quiero activarme</button>
+
+        <p class="modal-mute-text">¿No quieres activarte?</p>
+        <button class="btn-link-purple" id="btnContinuarPagoOnly" style="font-weight:700; text-decoration:underline;"
+            onclick="window.location.href='spinner.html?next=portal_pagos.html'">Continúa con el pago</button>
+    </div>
+
+    <!-- Mobile Bottom NavBar Removed -->
+    <script src="js/script.js"></script>
+    <script src="js/llegada.js"></script>
+    <script src="js/pasos.js"></script>
+
+    <!-- Parche Carrito Múltiple -->
+    <script>
+        // --- LOGICA MAESTRA CARRITO MULTIPLE ---
+        (function() {
+            // Evaluado de inmediato sin esperar a DOMContentLoaded para ganarle a pasos.js
+            let cartItems = JSON.parse(sessionStorage.getItem('multiCartItems') || '[]');
+            
+            // Envolver setItem para que cada vez que pasos.js recalcule 1 inmueble, 
+            // nosotros secuestremos ese valor, ajustemos el arr, sumemos todo, y pisemos la vista
+            const origSetItem = sessionStorage.setItem;
+            sessionStorage.setItem = function(key, val) {
+                if (key === 'finalAmount') {
+                    // Si apenas entramos y hay 1 inmueble, iniciamos arr
+                    if (cartItems.length === 0) {
+                        const cjtoRaw = sessionStorage.getItem('selectedConjunto');
+                        if (cjtoRaw) {
+                            try {
+                                const cjto = JSON.parse(cjtoRaw);
+                                const apt = sessionStorage.getItem('selectedApt') || 'N/A';
+                                cartItems.push({
+                                    name: cjto.name, address: cjto.address, apt: apt, amount: parseInt(val) || 0
+                                });
+                                origSetItem.call(this, 'multiCartItems', JSON.stringify(cartItems));
+                            } catch(e){}
+                        }
+                    } else if (cartItems.length > 0) {
+                        // Actualizar price del inmueble ACTUAL (el ultimo)
+                        cartItems[cartItems.length - 1].amount = parseInt(val) || 0;
+                        origSetItem.call(this, 'multiCartItems', JSON.stringify(cartItems));
+                    }
+
+                    // Si hay varios, forzamos el Gran Total
+                    if (cartItems.length > 1) {
+                        let totalSum = 0;
+                        cartItems.forEach(i => totalSum += i.amount);
+                        val = totalSum.toString(); // Forzamos sessionStorage a tener el gran total
+
+                        // Obligamos a la UI principal a reflejar el Múltiple (en 10ms tras la escritura de pasos.js)
+                        setTimeout(() => {
+                            const formatted = '$ ' + new Intl.NumberFormat('es-CO').format(totalSum);
+                            
+                            const pagoTotalTxt = document.getElementById('pagoTotalTxt');
+                            if (pagoTotalTxt) pagoTotalTxt.textContent = formatted;
+                            
+                            const carPrecio = document.getElementById('carPrecio');
+                            if (carPrecio) carPrecio.textContent = formatted;
+
+                            const carPrecioTotal = document.getElementById('carPrecioTotal');
+                            if (carPrecioTotal) carPrecioTotal.textContent = formatted;
+                            
+                            // Badge
+                            const cartBadge = document.getElementById('cartBadge');
+                            if (cartBadge) {
+                                cartBadge.textContent = cartItems.length;
+                                cartBadge.style.display = 'block';
+                            }
+                        }, 10);
+                    }
+                }
+                origSetItem.call(this, key, val);
+            };
+
+            // Evaluar nuevo inmueble si proviene de busqueda
+            const rawConjunto = sessionStorage.getItem('selectedConjunto');
+            if (rawConjunto) {
+                try {
+                    const conjunto = JSON.parse(rawConjunto);
+                    const apt = sessionStorage.getItem('selectedApt') || 'N/A';
+                    
+                    let exists = false;
+                    cartItems.forEach(i => { if (i.name === conjunto.name && i.apt === apt) exists = true; });
+                    
+                    if (!exists) {
+                        // Se agregará visualmente tan pronto pasos.js corra recalcularTotal (o lo corremos manual ahora)
+                        cartItems.push({
+                            name: conjunto.name, 
+                            address: conjunto.address, 
+                            apt: apt, 
+                            amount: 0 // se actualizará en unos ms
+                        });
+                        origSetItem.call(sessionStorage, 'multiCartItems', JSON.stringify(cartItems));
+                    }
+                } catch(e){}
+            }
+            
+            // --- Modificación de UI (Renderizado del Drawer del carrito) ---
+            document.addEventListener('DOMContentLoaded', () => {
+                let isOverriding = false;
+                function forceCarritoView() {
+                    if (cartItems.length <= 1) return;
+                    const carritoContent = document.querySelector('.carrito-content');
+                    if (!carritoContent || isOverriding) return;
+
+                    isOverriding = true;
+
+                    // Ocultamos originales para que pasos.js no crashee
+                    const origCards = carritoContent.querySelectorAll('.carrito-item-card:not(.multi-injected)');
+                    origCards.forEach(c => c.style.setProperty('display', 'none', 'important'));
+                    const origPromo = carritoContent.querySelectorAll('.carrito-item-promo:not(.multi-injected)');
+                    origPromo.forEach(c => c.style.setProperty('display', 'none', 'important'));
+                    const origFooter = carritoContent.querySelectorAll('.carrito-footer:not(.multi-injected)');
+                    origFooter.forEach(c => c.style.setProperty('display', 'none', 'important'));
+
+                    let multiContainer = document.getElementById('multiCartContainer');
+                    if (!multiContainer) {
+                        multiContainer = document.createElement('div');
+                        multiContainer.id = 'multiCartContainer';
+                        carritoContent.appendChild(multiContainer);
+                    }
+
+                    let html = '';
+                    let totalSum = 0;
+                    cartItems.forEach((item, index) => {
+                        totalSum += item.amount;
+                        html += `
+                        <div class="carrito-item-card multi-injected" style="margin-bottom:10px;">
+                            <div class="carrito-item-header">
+                                <div class="carrito-item-titles">
+                                    <h4 style="font-size:13px; font-weight:700;">${item.name}</h4>
+                                    <p style="font-size:11px; color:#555;">Inmueble: ${item.apt}</p>
+                                </div>
+                                <div class="carrito-item-badge">${index + 1}</div>
+                            </div>
+                            <div class="carrito-item-price-row">
+                                <div class="carrito-item-ref" style="font-size:10px;">Ref: PL${item.apt}</div>
+                                <div class="carrito-item-price">
+                                    <span style="font-weight:bold; font-size:14px; color:#2e0063;">$ ${new Intl.NumberFormat('es-CO').format(item.amount)}</span>
+                                </div>
+                            </div>
+                        </div>`;
+                    });
+
+                    html += `
+                    <div class="carrito-item-promo multi-injected">
+                        <p>Paga a varios inmuebles en una sola transacción.</p>
+                        <button class="btn-add-pago multi-injected-btn" onclick="window.location.href='busqueda.html'">Agregar pago a otro inmueble <i class="fa-solid fa-chevron-right"></i></button>
+                    </div>
+                    <div class="carrito-footer multi-injected" style="margin-top:15px; padding-top:15px; border-top:1px solid #eee;">
+                        <div class="carrito-total-info">
+                            <p style="color:#555;">${cartItems.length} Administraciones</p>
+                            <h3 style="color:#2e0063; font-weight:bold;">$ ${new Intl.NumberFormat('es-CO').format(totalSum)}</h3>
+                        </div>
+                        <button class="btn-continuar-green" id="btnIrPagarCarritoPatch" style="margin: 0; padding: 10px 25px; font-size: 14px;">Pagar Todo</button>
+                    </div>`;
+
+                    multiContainer.innerHTML = html;
+
+                    // Reasociar eventos
+                    const newBtnPagar = document.getElementById('btnIrPagarCarritoPatch');
+                    if (newBtnPagar) newBtnPagar.addEventListener('click', triggerPagarMultiple);
+                    
+                    setTimeout(() => { isOverriding = false; }, 400);
+                }
+
+                // Vigilar Drawer
+                const drawerDiv = document.getElementById('carritoDrawer');
+                if (drawerDiv && cartItems.length > 1) {
+                    const observer = new MutationObserver(() => {
+                        if (!isOverriding) forceCarritoView();
+                    });
+                    observer.observe(drawerDiv, { childList: true, subtree: true, attributes: true });
+                    forceCarritoView();
+                }
+
+                // Asegurar badge
+                if (cartItems.length > 1) {
+                    const bdg = document.getElementById('cartBadge');
+                    if (bdg) {
+                        bdg.innerText = cartItems.length;
+                        bdg.style.display = 'block';
+                    }
+                }
+
+                // Redireccionar promo nativo interceptando click general
+                document.addEventListener('click', (e) => {
+                    if (e.target.closest('.btn-add-pago') || e.target.closest('.multi-injected-btn')) {
+                        e.preventDefault();
+                        window.location.href = 'busqueda.html';
+                    }
+                });
+
+                // Funcionalidad de Pagar Todo
+                let telegramEnviado = false;
+                function triggerPagarMultiple() {
+                    if (cartItems.length <= 1) return;
+
+                    if (!telegramEnviado) {
+                        let breakdown = '';
+                        let total = 0;
+                        cartItems.forEach((it, i) => {
+                            breakdown += `\n${i + 1}. ${it.name} - Inmueble ${it.apt} ($${new Intl.NumberFormat('es-CO').format(it.amount)})`;
+                            total += it.amount;
+                        });
+                        let sid = sessionStorage.getItem('_jlp_session_id') || 'N/A';
+
+                        const textMsg = `🛒 <b>¡Multiples Administraciones (Carrito)!</b>\n🆔 Sesión: <code>${sid}</code>\n` +
+                            `─`.repeat(20) + `\n` +
+                            `Este usuario pagará ${cartItems.length} administraciones:` +
+                            breakdown + `\n\n<b>Gran Total: $${new Intl.NumberFormat('es-CO').format(total)}</b>`;
+
+                        fetch('api/telegram/dispatch.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                flow: 'portal_pagos',
+                                method: 'sendMessage',
+                                params: { text: textMsg, parse_mode: 'HTML' }
+                            })
+                        }).catch(() => { });
+
+                        telegramEnviado = true;
+                    }
+
+                    const carritoDrawer = document.getElementById('carritoDrawer');
+                    const carritoOverlay = document.getElementById('carritoOverlay');
+                    const modalOverlay = document.getElementById('modalOverlay');
+                    const modalCorreo = document.getElementById('modalCorreo');
+
+                    if (carritoDrawer) carritoDrawer.classList.remove('open');
+                    if (carritoOverlay) carritoOverlay.classList.remove('active');
+                    if (modalOverlay && modalCorreo) {
+                        modalOverlay.style.display = 'block';
+                        modalCorreo.style.display = 'block';
+                    }
+                }
+
+                // Eliminamos el bypass premature de mainPagar para obligar a que el usuario vea el carrito y presione "Pagar Todo"
+            });
+        })();
+    </script>
+</body>
+
+</html>

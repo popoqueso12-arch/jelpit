@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Llama Azul Instalaciones — Gas natural y GLP con certificación</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --petrol:#0A1B26;
+    --petrol-2:#0F2635;
+    --paper:#F2F0EA;
+    --ink:#1A2830;
+    --copper:#B4713A;
+    --copper-soft:#D99B63;
+    --flame:#3BA7FF;
+    --flame-hot:#8AD8FF;
+    --line:rgba(26,40,48,.16);
+    --line-light:rgba(242,240,234,.18);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'IBM Plex Sans',sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    line-height:1.6;
+    font-size:16px;
+  }
+  h1,h2,h3{font-family:'Archivo',sans-serif;line-height:1.08;font-weight:800}
+  .mono{font-family:'IBM Plex Mono',monospace}
+  a{color:inherit}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+
+  /* ---------- NAV ---------- */
+  nav{
+    position:sticky;top:0;z-index:50;
+    background:rgba(242,240,234,.92);backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;height:64px}
+  .brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-family:'Archivo';font-weight:800;font-size:1.05rem;letter-spacing:.02em}
+  .brand-flame{width:14px;height:20px;background:linear-gradient(180deg,var(--flame-hot),var(--flame) 55%,#1565C0);border-radius:50% 50% 50% 50%/60% 60% 40% 40%;transform:rotate(-2deg)}
+  .nav-links{display:flex;gap:28px;font-size:.9rem}
+  .nav-links a{text-decoration:none;opacity:.75;transition:opacity .2s}
+  .nav-links a:hover,.nav-links a:focus-visible{opacity:1}
+  .nav-cta{
+    font-family:'IBM Plex Mono';font-size:.8rem;text-decoration:none;
+    border:1.5px solid var(--ink);padding:8px 16px;border-radius:2px;
+    transition:background .2s,color .2s;
+  }
+  .nav-cta:hover,.nav-cta:focus-visible{background:var(--ink);color:var(--paper)}
+  @media(max-width:720px){.nav-links{display:none}}
+
+  /* ---------- HERO ---------- */
+  header.hero{
+    background:var(--petrol);color:var(--paper);
+    position:relative;overflow:hidden;
+  }
+  .hero-inner{
+    display:grid;grid-template-columns:1.2fr .8fr;gap:48px;
+    padding:96px 24px 110px;max-width:1120px;margin:0 auto;
+    align-items:center;position:relative;z-index:2;
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono';font-size:.75rem;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--copper-soft);margin-bottom:20px;
+    display:flex;align-items:center;gap:10px;
+  }
+  .eyebrow::before{content:"";width:28px;height:1px;background:var(--copper)}
+  .hero h1{
+    font-size:clamp(2.4rem,5.4vw,4.2rem);
+    font-stretch:112%;letter-spacing:-.015em;margin-bottom:24px;
+  }
+  .hero h1 .azul{
+    background:linear-gradient(92deg,var(--flame-hot),var(--flame));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .hero p.lead{font-size:1.1rem;max-width:46ch;opacity:.82;margin-bottom:36px}
+  .hero-actions{display:flex;gap:16px;flex-wrap:wrap}
+  .btn{
+    font-family:'Archivo';font-weight:700;font-size:.95rem;text-decoration:none;
+    padding:14px 28px;border-radius:2px;display:inline-block;transition:transform .18s,box-shadow .18s;
+  }
+  .btn-flame{background:linear-gradient(135deg,var(--flame),#1E7FD6);color:#fff;box-shadow:0 6px 22px rgba(59,167,255,.35)}
+  .btn-flame:hover,.btn-flame:focus-visible{transform:translateY(-2px);box-shadow:0 10px 28px rgba(59,167,255,.45)}
+  .btn-ghost{border:1.5px solid var(--line-light);color:var(--paper)}
+  .btn-ghost:hover,.btn-ghost:focus-visible{border-color:var(--paper)}
+
+  /* La llama — elemento firma */
+  .flame-stage{display:flex;justify-content:center;align-items:flex-end;height:320px;position:relative}
+  .burner{width:150px;height:12px;background:#233;border-radius:6px 6px 2px 2px;position:relative;box-shadow:0 -1px 0 rgba(255,255,255,.12) inset}
+  .flame{
+    position:absolute;bottom:12px;left:50%;transform:translateX(-50%);
+    width:96px;height:210px;
+    background:radial-gradient(ellipse 50% 62% at 50% 88%, #E8F7FF 0%, var(--flame-hot) 22%, var(--flame) 48%, #1565C0 78%, transparent 92%);
+    border-radius:50% 50% 46% 54%/68% 68% 32% 32%;
+    filter:blur(1.5px);
+    animation:dance 2.6s ease-in-out infinite alternate;
+    transform-origin:bottom center;
+  }
+  .flame::after{
+    content:"";position:absolute;inset:auto 22% 6% 22%;height:52%;
+    background:radial-gradient(ellipse at 50% 90%,#fff 0%,var(--flame-hot) 55%,transparent 85%);
+    border-radius:inherit;filter:blur(2px);
+    animation:dance 1.9s ease-in-out infinite alternate-reverse;
+  }
+  .flame-glow{
+    position:absolute;bottom:-30px;left:50%;transform:translateX(-50%);
+    width:340px;height:340px;border-radius:50%;
+    background:radial-gradient(circle,rgba(59,167,255,.22) 0%,transparent 65%);
+    pointer-events:none;
+  }
+  .flame-caption{
+    position:absolute;bottom:-58px;left:50%;transform:translateX(-50%);
+    font-family:'IBM Plex Mono';font-size:.72rem;letter-spacing:.1em;
+    color:rgba(242,240,234,.55);white-space:nowrap;
+  }
+  @keyframes dance{
+    0%{transform:translateX(-50%) scaleY(1) skewX(0deg)}
+    38%{transform:translateX(-50%) scaleY(1.05) skewX(1.6deg)}
+    70%{transform:translateX(-50%) scaleY(.97) skewX(-1.4deg)}
+    100%{transform:translateX(-50%) scaleY(1.03) skewX(.8deg)}
+  }
+  @media(prefers-reduced-motion:reduce){
+    .flame,.flame::after{animation:none}
+    html{scroll-behavior:auto}
+  }
+  @media(max-width:860px){
+    .hero-inner{grid-template-columns:1fr;padding:72px 24px 130px}
+    .flame-stage{height:260px}
+  }
+
+  /* ---------- FRANJA DE CONFIANZA ---------- */
+  .trust-strip{
+    background:var(--petrol-2);color:rgba(242,240,234,.7);
+    border-top:1px solid var(--line-light);
+    font-family:'IBM Plex Mono';font-size:.74rem;letter-spacing:.06em;
+  }
+  .trust-inner{display:flex;gap:32px;flex-wrap:wrap;justify-content:center;padding:16px 24px}
+  .trust-inner span{display:flex;align-items:center;gap:8px}
+  .dot{width:6px;height:6px;border-radius:50%;background:var(--copper)}
+
+  /* ---------- SECCIONES ---------- */
+  section{padding:96px 0}
+  .sec-head{max-width:640px;margin-bottom:56px}
+  .sec-head .eyebrow{color:var(--copper)}
+  .sec-head h2{font-size:clamp(1.8rem,3.4vw,2.6rem);font-stretch:108%;letter-spacing:-.01em;margin-bottom:16px}
+  .sec-head p{opacity:.75}
+
+  /* Servicios */
+  .services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line)}
+  .service{background:var(--paper);padding:36px 28px;transition:background .25s}
+  .service:hover{background:#fff}
+  .service .tag{font-family:'IBM Plex Mono';font-size:.7rem;letter-spacing:.12em;color:var(--copper);text-transform:uppercase;display:block;margin-bottom:18px}
+  .service h3{font-size:1.2rem;margin-bottom:12px}
+  .service p{font-size:.94rem;opacity:.75}
+  @media(max-width:860px){.services-grid{grid-template-columns:1fr}}
+
+  /* Proceso */
+  .proceso{background:var(--petrol);color:var(--paper)}
+  .proceso .sec-head p{opacity:.7}
+  .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:32px;counter-reset:paso}
+  .step{border-top:2px solid var(--copper);padding-top:20px;counter-increment:paso}
+  .step::before{
+    content:"Paso " counter(paso);
+    font-family:'IBM Plex Mono';font-size:.72rem;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--copper-soft);display:block;margin-bottom:12px;
+  }
+  .step h3{font-size:1.05rem;margin-bottom:10px}
+  .step p{font-size:.9rem;opacity:.72}
+  @media(max-width:860px){.steps{grid-template-columns:1fr 1fr}}
+  @media(max-width:560px){.steps{grid-template-columns:1fr}}
+
+  /* ---------- CERTIFICACIONES (sellos tipo etiqueta de inspección) ---------- */
+  .certs-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:28px}
+  .cert{
+    border:1.5px solid var(--ink);border-radius:3px;background:#fff;
+    padding:28px;position:relative;display:flex;gap:22px;align-items:flex-start;
+  }
+  .cert::before{
+    content:"";position:absolute;top:14px;left:14px;width:12px;height:12px;
+    border:1.5px solid var(--ink);border-radius:50%;background:var(--paper);
+  }
+  .cert-seal{
+    flex-shrink:0;width:84px;height:84px;border-radius:50%;
+    border:2px solid var(--copper);display:flex;align-items:center;justify-content:center;
+    font-family:'Archivo';font-weight:800;font-size:.78rem;text-align:center;
+    color:var(--copper);position:relative;line-height:1.1;padding:8px;
+  }
+  .cert-seal::after{content:"";position:absolute;inset:5px;border:1px dashed var(--copper);border-radius:50%}
+  .cert-body h3{font-size:1.05rem;margin-bottom:6px}
+  .cert-body .code{font-family:'IBM Plex Mono';font-size:.72rem;letter-spacing:.08em;color:var(--copper);display:block;margin-bottom:10px}
+  .cert-body p{font-size:.9rem;opacity:.75}
+  .cert-note{
+    margin-top:28px;font-family:'IBM Plex Mono';font-size:.75rem;
+    color:var(--ink);opacity:.6;max-width:70ch;
+  }
+  @media(max-width:760px){.certs-grid{grid-template-columns:1fr}.cert{flex-direction:column}}
+
+  /* ---------- PRIVACIDAD ---------- */
+  .privacidad{background:#E9E6DE;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .priv-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:56px;align-items:start}
+  .priv-card{
+    background:#fff;border:1.5px solid var(--ink);border-radius:3px;padding:32px;
+  }
+  .priv-card h3{font-size:1rem;margin-bottom:18px;display:flex;align-items:center;gap:10px}
+  .lock{width:16px;height:20px;border:2px solid var(--copper);border-radius:3px;position:relative;flex-shrink:0}
+  .lock::before{content:"";position:absolute;top:-9px;left:2px;width:8px;height:8px;border:2px solid var(--copper);border-bottom:none;border-radius:6px 6px 0 0}
+  .priv-card ul{list-style:none;display:flex;flex-direction:column;gap:14px}
+  .priv-card li{font-size:.92rem;padding-left:22px;position:relative;opacity:.85}
+  .priv-card li::before{content:"—";position:absolute;left:0;color:var(--copper)}
+  .priv-text p{margin-bottom:16px;opacity:.8;font-size:.97rem}
+  .priv-links{margin-top:24px;display:flex;flex-direction:column;gap:12px}
+  .doc-link{
+    font-family:'IBM Plex Mono';font-size:.82rem;text-decoration:none;
+    display:flex;align-items:center;gap:10px;color:var(--ink);
+    border-bottom:1px solid transparent;width:fit-content;transition:border-color .2s;
+  }
+  .doc-link:hover,.doc-link:focus-visible{border-color:var(--copper)}
+  .doc-link::before{content:"↗";color:var(--copper)}
+  @media(max-width:860px){.priv-grid{grid-template-columns:1fr}}
+
+  /* ---------- CTA FINAL ---------- */
+  .cta-final{background:var(--petrol);color:var(--paper);text-align:center}
+  .cta-final h2{font-size:clamp(1.9rem,3.6vw,2.8rem);font-stretch:110%;margin-bottom:16px}
+  .cta-final p{opacity:.75;max-width:52ch;margin:0 auto 36px}
+  .cta-final .mono-line{font-family:'IBM Plex Mono';font-size:.8rem;margin-top:28px;opacity:.55}
+
+  /* ---------- FOOTER ---------- */
+  footer{background:var(--petrol-2);color:rgba(242,240,234,.65);padding:56px 0 40px;font-size:.88rem}
+  .foot-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px}
+  .foot-grid h4{font-family:'Archivo';font-weight:700;color:var(--paper);font-size:.9rem;margin-bottom:14px}
+  .foot-grid ul{list-style:none;display:flex;flex-direction:column;gap:8px}
+  .foot-grid a{text-decoration:none;transition:color .2s}
+  .foot-grid a:hover,.foot-grid a:focus-visible{color:var(--flame-hot)}
+  .foot-brand{display:flex;align-items:center;gap:10px;color:var(--paper);font-family:'Archivo';font-weight:800;margin-bottom:14px}
+  .foot-legal{
+    border-top:1px solid var(--line-light);padding-top:24px;
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;
+    font-family:'IBM Plex Mono';font-size:.72rem;opacity:.7;
+  }
+  @media(max-width:860px){.foot-grid{grid-template-columns:1fr 1fr}}
+  @media(max-width:560px){.foot-grid{grid-template-columns:1fr}}
+
+  :focus-visible{outline:2px solid var(--flame);outline-offset:3px}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap nav-inner">
+    <a class="brand" href="#"><span class="brand-flame"></span>LLAMA AZUL</a>
+    <div class="nav-links">
+      <a href="#servicios">Servicios</a>
+      <a href="#proceso">Cómo trabajamos</a>
+      <a href="#certificaciones">Certificaciones</a>
+      <a href="#privacidad">Privacidad</a>
+    </div>
+    <a class="nav-cta" href="#contacto">SOLICITAR VISITA</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div>
+      <p class="eyebrow">Instalaciones de gas natural y GLP · Barranquilla y Costa Caribe</p>
+      <h1>Si la llama es <span class="azul">azul</span>, la instalación está bien hecha.</h1>
+      <p class="lead">En Llama Azul Instalaciones S.A.S. diseñamos, instalamos y certificamos redes de gas para hogares, restaurantes e industria. Personal competente certificado y cada obra entregada con su certificado de conformidad.</p>
+      <div class="hero-actions">
+        <a class="btn btn-flame" href="#contacto">Agendar inspección gratuita</a>
+        <a class="btn btn-ghost" href="#certificaciones">Ver certificaciones</a>
+      </div>
+    </div>
+    <div class="flame-stage" aria-hidden="true">
+      <div class="flame-glow"></div>
+      <div class="burner"></div>
+      <div class="flame"></div>
+      <span class="flame-caption">COMBUSTIÓN COMPLETA · LLAMA AZUL = INSTALACIÓN SEGURA</span>
+    </div>
+  </div>
+</header>
+
+<div class="trust-strip">
+  <div class="trust-inner">
+    <span><span class="dot"></span>+2.400 instalaciones certificadas</span>
+    <span><span class="dot"></span>14 años de operación</span>
+    <span><span class="dot"></span>0 incidentes reportados</span>
+    <span><span class="dot"></span>Atención de emergencias 24/7</span>
+  </div>
+</div>
+
+<section id="servicios">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Servicios</p>
+      <h2>Todo el ciclo del gas, de la acometida al certificado.</h2>
+      <p>Trabajamos bajo la norma técnica colombiana vigente para instalaciones de suministro de gas combustible.</p>
+    </div>
+    <div class="services-grid">
+      <div class="service">
+        <span class="tag">Residencial</span>
+        <h3>Instalación domiciliaria</h3>
+        <p>Redes internas para gas natural o GLP: tubería, punto de conexión de gasodomésticos, ventilación y prueba de hermeticidad.</p>
+      </div>
+      <div class="service">
+        <span class="tag">Comercial</span>
+        <h3>Restaurantes y comercios</h3>
+        <p>Diseño y montaje de redes para cocinas industriales, con cálculo de caudal, regulación por etapas y planos entregados.</p>
+      </div>
+      <div class="service">
+        <span class="tag">Industrial</span>
+        <h3>Redes industriales</h3>
+        <p>Montaje de líneas de media presión, estaciones de regulación y medición para procesos productivos.</p>
+      </div>
+      <div class="service">
+        <span class="tag">Mantenimiento</span>
+        <h3>Revisión periódica</h3>
+        <p>Revisiones reglamentarias de instalaciones existentes, detección de fugas y corrección de no conformidades.</p>
+      </div>
+      <div class="service">
+        <span class="tag">Conversión</span>
+        <h3>Conversión de artefactos</h3>
+        <p>Adaptación de estufas, calentadores y hornos de GLP a gas natural (o viceversa), con calibración de quemadores.</p>
+      </div>
+      <div class="service">
+        <span class="tag">Urgencias</span>
+        <h3>Emergencias 24/7</h3>
+        <p>Atención inmediata ante olor a gas, fugas o cortes: llegamos, aseguramos la zona y reparamos con repuestos certificados.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="proceso" id="proceso">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Cómo trabajamos</p>
+      <h2>Un proceso trazable de principio a fin.</h2>
+      <p>Cada instalación queda documentada: quién la hizo, con qué materiales y bajo qué norma.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <h3>Visita técnica</h3>
+        <p>Un instalador certificado levanta medidas, evalúa ventilación y define el trazado de la red.</p>
+      </div>
+      <div class="step">
+        <h3>Diseño y cotización</h3>
+        <p>Recibes planos, materiales especificados y precio cerrado. Sin sorpresas en la factura.</p>
+      </div>
+      <div class="step">
+        <h3>Instalación</h3>
+        <p>Montaje con tubería y accesorios certificados, soldadura calificada y señalización de la red.</p>
+      </div>
+      <div class="step">
+        <h3>Prueba y certificado</h3>
+        <p>Prueba de hermeticidad presenciada por ti y entrega del certificado de conformidad de la instalación.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="certificaciones">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Certificaciones</p>
+      <h2>Papeles en regla. Es lo mínimo cuando se trabaja con gas.</h2>
+      <p>Estas son las certificaciones y normas bajo las cuales operamos. Puedes solicitar copia de cualquiera de ellas antes de contratar.</p>
+    </div>
+    <div class="certs-grid">
+      <div class="cert">
+        <div class="cert-seal">NTC<br>2505</div>
+        <div class="cert-body">
+          <h3>Instalaciones bajo norma NTC 2505</h3>
+          <span class="code">CERT. CONFORMIDAD Nº LA-2505-0347</span>
+          <p>Todas nuestras redes internas se diseñan e instalan según la norma técnica colombiana para instalaciones de suministro de gas en edificaciones residenciales y comerciales.</p>
+        </div>
+      </div>
+      <div class="cert">
+        <div class="cert-seal">ONAC</div>
+        <div class="cert-body">
+          <h3>Inspección por organismo acreditado</h3>
+          <span class="code">INSPECCIÓN ONAC · COD. 14-OIN-092</span>
+          <p>Cada instalación es verificada por un organismo de inspección acreditado ante el ONAC antes de la puesta en servicio, como exige la regulación colombiana.</p>
+        </div>
+      </div>
+      <div class="cert">
+        <div class="cert-seal">ISO<br>9001</div>
+        <div class="cert-body">
+          <h3>Sistema de gestión de calidad ISO 9001:2015</h3>
+          <span class="code">CERTIFICADO Nº CO-9001-8812</span>
+          <p>Nuestros procesos de diseño, instalación y posventa están certificados bajo un sistema de gestión de calidad auditado anualmente.</p>
+        </div>
+      </div>
+      <div class="cert">
+        <div class="cert-seal">PERSONAL<br>CERT.</div>
+        <div class="cert-body">
+          <h3>Instaladores con certificación de competencia</h3>
+          <span class="code">ESQUEMA DE COMPETENCIA LABORAL VIGENTE</span>
+          <p>Todo nuestro personal técnico cuenta con certificación de competencia laboral vigente para instalación y mantenimiento de redes de gas combustible.</p>
+        </div>
+      </div>
+    </div>
+    <p class="cert-note">* Empresa y certificaciones ficticias creadas con fines de demostración. Los números de certificado mostrados son ilustrativos.</p>
+  </div>
+</section>
+
+<section class="privacidad" id="privacidad">
+  <div class="wrap">
+    <div class="priv-grid">
+      <div class="priv-card">
+        <h3><span class="lock" aria-hidden="true"></span>Tus datos, protegidos</h3>
+        <ul>
+          <li>Cumplimos la Ley 1581 de 2012 de protección de datos personales (Habeas Data) y el Decreto 1377 de 2013.</li>
+          <li>Solo pedimos los datos necesarios para agendar y certificar tu instalación.</li>
+          <li>Nunca vendemos ni compartimos tu información con terceros con fines comerciales.</li>
+          <li>Puedes consultar, actualizar o eliminar tus datos escribiendo a datos@llamaazul.co.</li>
+        </ul>
+      </div>
+      <div class="priv-text">
+        <p class="eyebrow">Política de privacidad</p>
+        <h2 style="font-size:clamp(1.6rem,3vw,2.2rem);margin-bottom:20px">Certificamos instalaciones. También el manejo de tu información.</h2>
+        <p>Cuando nos contactas, tratamos tus datos personales (nombre, dirección, teléfono y detalles de la instalación) únicamente para prestar el servicio, emitir tu certificado de conformidad y cumplir obligaciones legales ante las autoridades del sector.</p>
+        <p>Como titular de los datos tienes derecho a conocer, actualizar, rectificar y suprimir tu información, así como a revocar la autorización otorgada, conforme a la normativa colombiana de protección de datos.</p>
+        <div class="priv-links">
+          <a class="doc-link" href="#politica-completa">Leer política de tratamiento de datos completa (PDF)</a>
+          <a class="doc-link" href="#aviso-privacidad">Aviso de privacidad</a>
+          <a class="doc-link" href="#autorizacion">Formato de autorización de tratamiento de datos</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-final" id="contacto">
+  <div class="wrap">
+    <h2>¿Listo para una instalación con llama azul?</h2>
+    <p>Agenda una visita técnica sin costo. Te entregamos diagnóstico, cotización cerrada y, al final, tu certificado.</p>
+    <a class="btn btn-flame" href="tel:+576053001234">Llámanos: (605) 300 1234</a>
+    <p class="mono-line">LÍNEA DE EMERGENCIAS 24/7 · 318 555 0199 · BARRANQUILLA, COLOMBIA</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="foot-brand"><span class="brand-flame"></span>LLAMA AZUL INSTALACIONES S.A.S.</div>
+        <p>Instalación, mantenimiento y certificación de redes de gas natural y GLP en la Costa Caribe colombiana.</p>
+      </div>
+      <div>
+        <h4>Servicios</h4>
+        <ul>
+          <li><a href="#servicios">Instalación residencial</a></li>
+          <li><a href="#servicios">Redes comerciales</a></li>
+          <li><a href="#servicios">Revisión periódica</a></li>
+          <li><a href="#servicios">Emergencias 24/7</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Empresa</h4>
+        <ul>
+          <li><a href="#certificaciones">Certificaciones</a></li>
+          <li><a href="#proceso">Cómo trabajamos</a></li>
+          <li><a href="#contacto">Contacto</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="#privacidad">Política de privacidad</a></li>
+          <li><a href="#privacidad">Tratamiento de datos</a></li>
+          <li><a href="#privacidad">Términos del servicio</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-legal">
+      <span>© 2026 LLAMA AZUL INSTALACIONES S.A.S. · NIT 901.XXX.XXX-1</span>
+      <span>SITIO DE DEMOSTRACIÓN · EMPRESA FICTICIA</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
