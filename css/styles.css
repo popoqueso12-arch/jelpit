@@ -813,6 +813,24 @@ a.bottom-btn {
     transition: none;
 }
 
+.btn-pagar-mobile {
+    background-color: #bdf6bc;
+    color: var(--c-lib-tb-primaryBase);
+    border-radius: 6px;
+    padding: 8px 12px;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    text-align: center;
+    line-height: 1.15;
+    font-size: 11.5px;
+    font-weight: 400;
+    transition: transform 0.2s;
+}
+
 /* ── Overlay ──────────────────────────────────────── */
 .menu-overlay {
     display: none;
