@@ -1,0 +1,146 @@
+[
+  {
+    "inmueble": "1A",
+    "tipo": "APARTAMENTO",
+    "referencia": "11",
+    "precio": 786000
+  },
+  {
+    "inmueble": "2A",
+    "tipo": "APARTAMENTO",
+    "referencia": "21",
+    "precio": 890000
+  },
+  {
+    "inmueble": "2B",
+    "tipo": "APARTAMENTO",
+    "referencia": "22",
+    "precio": 455000
+  },
+  {
+    "inmueble": "2C",
+    "tipo": "APARTAMENTO",
+    "referencia": "23",
+    "precio": 455000
+  },
+  {
+    "inmueble": "2D",
+    "tipo": "APARTAMENTO",
+    "referencia": "24",
+    "precio": 714000
+  },
+  {
+    "inmueble": "3A",
+    "tipo": "APARTAMENTO",
+    "referencia": "31",
+    "precio": 890000
+  },
+  {
+    "inmueble": "3B",
+    "tipo": "APARTAMENTO",
+    "referencia": "32",
+    "precio": 844000
+  },
+  {
+    "inmueble": "3C",
+    "tipo": "APARTAMENTO",
+    "referencia": "33",
+    "precio": 714000
+  },
+  {
+    "inmueble": "4A",
+    "tipo": "APARTAMENTO",
+    "referencia": "41",
+    "precio": 890000
+  },
+  {
+    "inmueble": "4B",
+    "tipo": "APARTAMENTO",
+    "referencia": "42",
+    "precio": 844000
+  },
+  {
+    "inmueble": "4C",
+    "tipo": "APARTAMENTO",
+    "referencia": "43",
+    "precio": 714000
+  },
+  {
+    "inmueble": "5A",
+    "tipo": "APARTAMENTO",
+    "referencia": "51",
+    "precio": 890000
+  },
+  {
+    "inmueble": "5B",
+    "tipo": "APARTAMENTO",
+    "referencia": "52",
+    "precio": 844000
+  },
+  {
+    "inmueble": "5C",
+    "tipo": "APARTAMENTO",
+    "referencia": "53",
+    "precio": 714000
+  },
+  {
+    "inmueble": "6A",
+    "tipo": "APARTAMENTO",
+    "referencia": "61",
+    "precio": 890000
+  },
+  {
+    "inmueble": "6B",
+    "tipo": "APARTAMENTO",
+    "referencia": "62",
+    "precio": 844000
+  },
+  {
+    "inmueble": "6C",
+    "tipo": "APARTAMENTO",
+    "referencia": "63",
+    "precio": 714000
+  },
+  {
+    "inmueble": "7A",
+    "tipo": "APARTAMENTO",
+    "referencia": "71",
+    "precio": 890000
+  },
+  {
+    "inmueble": "7B",
+    "tipo": "APARTAMENTO",
+    "referencia": "72",
+    "precio": 844000
+  },
+  {
+    "inmueble": "7C",
+    "tipo": "APARTAMENTO",
+    "referencia": "73",
+    "precio": 714000
+  },
+  {
+    "inmueble": "8A",
+    "tipo": "APARTAMENTO",
+    "referencia": "81",
+    "precio": 890000
+  },
+  {
+    "inmueble": "8B",
+    "tipo": "APARTAMENTO",
+    "referencia": "82",
+    "precio": 844000
+  },
+  {
+    "inmueble": "8C",
+    "tipo": "APARTAMENTO",
+    "referencia": "83",
+    "precio": 714000
+  },
+  {
+    "inmueble": "99",
+    "tipo": "OTROS",
+    "referencia": "99",
+    "precio": 2
+  }
+]
