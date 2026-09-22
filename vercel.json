@@ -1,0 +1,6 @@
+{
+  "framework": null,
+  "rewrites": [
+    { "source": "/api/apartamentos/:path*", "destination": "/apt/apartamentos/:path*" }
+  ]
+}
